@@ -1,0 +1,31 @@
+fieldtype_fields:
+  spellcheck:
+    type: toggle
+    default: true
+  allow_source:
+    type: toggle
+    default: true
+  autoLink:
+    type: toggle
+    default: false
+  target_blank:
+    type: toggle
+    default: false
+  link_validation:
+    type: toggle
+    default: false
+  force_plain_text:
+    type: toggle
+    default: true
+  clean_pasted_html:
+    type: toggle
+    default: false
+  sets:
+    type: replicator_sets
+  container:
+    type: asset_container
+    allow_blank: true
+  folder:
+    type: asset_folder
+  restrict_assets:
+    type: toggle
