@@ -75,7 +75,7 @@ class GenerateCommand extends Command
 
     protected function changeThemeConfig($path, $old_name, $new_name)
     {
-        $text = str_replace($old_name, $new_name, $path);
+        $text = str_replace($old_name, $new_name, file_get_contents($path));
 
         file_put_contents($path, $text);
     }
