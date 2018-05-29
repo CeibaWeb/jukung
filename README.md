@@ -1,6 +1,6 @@
 # Jukung Statamic Generator
 
-This project is developed to give a head-start on building Statamic site the Ceiba way. Basically, it creates a new Statamic site, sets up Laravel Mix, Webpack, and Vue, removes the Statamic default JS scaffolding, and replaces the default theme with your theme name.
+This project is developed to give a head-start on building Statamic site the Ceiba way. Basically, it creates a new Statamic site, sets up Laravel Mix, Tailwind CSS, Webpack, and Vue, removes the Statamic default JS scaffolding, and replaces the default theme with your theme name.
 
 ## Usage
 
