@@ -46,14 +46,13 @@ class GenerateCommand extends Command
 
         $this->changeJs($theme_path, $current_theme, $name);
 
-        $this->changeMixConfig($theme_path, $current_theme, $name);
+        // change webpack.mix.js
+        $this->searchAndReplace("$theme_path/webpack.mix.js", $current_theme, $name);
 
-        $this->changeThemeConfig(site_path('settings/theming.yaml'), $current_theme, $name);
+        // change theming.yaml to new theme
+        $this->searchAndReplace(site_path('settings/theming.yaml'), $current_theme, $name);
 
         $this->changeThemeDir(site_path('themes'), $current_theme, $name);
-
-        Config::set("theming.theme", $name);
-
     }
 
     protected function changeCss($path, $old_name, $new_name)
@@ -66,14 +65,7 @@ class GenerateCommand extends Command
         rename("$path/src/js/{$old_name}.js", "$path/src/js/{$new_name}.js");
     }
 
-    protected function changeMixConfig($path, $old_name, $new_name)
-    {
-        $text = str_replace($old_name, $new_name, file_get_contents("$path/webpack.mix.js"));
-
-        file_put_contents("$path/webpack.mix.js", $text);
-    }
-
-    protected function changeThemeConfig($path, $old_name, $new_name)
+    protected function searchAndReplace($path, $old_name, $new_name)
     {
         $text = str_replace($old_name, $new_name, file_get_contents($path));
 
