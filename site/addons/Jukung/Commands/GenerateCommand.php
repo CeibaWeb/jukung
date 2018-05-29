@@ -48,6 +48,8 @@ class GenerateCommand extends Command
 
         $this->changeMixConfig($theme_path, $current_theme, $name);
 
+        $this->changeThemeConfig(site_path('settings/theming.yaml'), $current_name, $name);
+
         $this->changeThemeDir(site_path('themes'), $current_theme, $name);
 
         Config::set("theming.theme", $name);
@@ -69,6 +71,13 @@ class GenerateCommand extends Command
         $text = str_replace($old_name, $new_name, file_get_contents("$path/webpack.mix.js"));
 
         file_put_contents("$path/webpack.mix.js", $text);
+    }
+
+    protected function changeThemeConfig($path, $old_name, $new_name)
+    {
+        $text = str_replace($old_name, $new_name, $path);
+
+        file_put_contents($path, $text);
     }
 
     protected function changeThemeDir($path, $old_name, $new_name)
