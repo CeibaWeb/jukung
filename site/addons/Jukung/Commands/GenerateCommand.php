@@ -48,7 +48,7 @@ class GenerateCommand extends Command
 
         $this->changeMixConfig($theme_path, $current_theme, $name);
 
-        $this->changeThemeConfig(site_path('settings/theming.yaml'), $current_name, $name);
+        $this->changeThemeConfig(site_path('settings/theming.yaml'), $current_theme, $name);
 
         $this->changeThemeDir(site_path('themes'), $current_theme, $name);
 
