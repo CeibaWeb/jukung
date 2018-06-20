@@ -262,7 +262,6 @@
         transition: all 0.2s ease;
     }
 
-    #statamic-logo path { fill: #fff; }
 
     nav.nav-main {
         background: #fff;
@@ -277,6 +276,10 @@
 
     .nav-mobile {
         display: flex;
+
+        .logo svg path {
+            fill: #fff;
+        }
     }
 
     body.nav-visible {
@@ -287,14 +290,5 @@
             padding-top: 16px;
         }
         .content { opacity: 0.5; }
-    }
-
-    .stuck .card.sticky {
-        // if you cant beat 'em, join 'em. sticky is difficult to adjust
-        // when responsive. just make it not sticky for now.
-        position: static !important;
-        margin: 0;
-        box-shadow: none;
-        border-bottom: 1px solid $color_border;
     }
 }

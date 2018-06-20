@@ -56,10 +56,10 @@ class FormsController extends CpController
         $form = Form::get($form);
 
         $columns = collect($form->columns())->map(function ($val, $column) {
-            return ['label' => $column, 'field' => $column, 'translation' => $val];
+            return ['value' => $column, 'header' => $val];
         })->values()->reverse()->push([
-            'label' => 'datestring',
-            'field' => 'datestamp'
+            'value' => 'datestring',
+            'header' => 'datestamp'
         ])->reverse();
 
         $submissions = collect($form->submissions()->each(function ($submission) {
@@ -85,7 +85,7 @@ class FormsController extends CpController
         }
 
         // Perform the sort!
-        if ($customSort !== 'datestamp' || $sortOrder !== 'desc') {
+        if ($customSort !== 'datestring' || $sortOrder !== 'desc') {
             $submissions = $submissions->sortBy($sort, null, $sortOrder === 'desc');
         }
 
@@ -242,8 +242,9 @@ class FormsController extends CpController
         $this->access('super');
 
         $form = Form::get($form);
+        $title = t('editing_formset');
 
-        return view('forms.edit', compact('form'));
+        return view('forms.edit', compact('form', 'title'));
     }
 
     public function update($form)

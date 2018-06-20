@@ -7,6 +7,8 @@ use Statamic\Extend\Fieldtype;
 
 class DateFieldtype extends Fieldtype
 {
+    public $category = ['special', 'pickable', 'text'];
+
     public function preProcess($data)
     {
         if (! $data) {

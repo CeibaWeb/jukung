@@ -26,12 +26,12 @@ class PagePublisher extends Publisher
         $rules = ['fields.title' => 'required'];
 
         if (! $this->request->input('extra.is_home')) {
-            $rules['slug'] = "required|alpha_dash|page_uri_exists:{$this->request->input('extra.parent_url')},{$this->request->uuid}";
+            $rules['fields.slug'] = "required|alpha_dash|page_uri_exists:{$this->request->input('extra.parent_url')},{$this->request->uuid}";
         }
 
         $this->validate($rules, [], [
             'fields.title' => $this->getTitleDisplayName(),
-            'slug' => trans('cp.slug')
+            'fields.slug' => trans('cp.slug')
         ]);
     }
 
@@ -50,6 +50,8 @@ class PagePublisher extends Publisher
         } else {
             $this->prepForExistingPage();
         }
+
+        unset($this->fields['slug']);
     }
 
     /**

@@ -57,7 +57,7 @@ class NavItem
 
     public function route($route, $arg = [])
     {
-        return $this->url(route($route, $arg, false));
+        return $this->url(route($route, $arg));
     }
 
     public function icon($icon = null)

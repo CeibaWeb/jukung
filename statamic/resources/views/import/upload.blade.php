@@ -5,7 +5,7 @@
     <form action="{{ route('import.upload') }}" method="POST" enctype="multipart/form-data">
         {{ csrf_field() }}
 
-        <div class="flexy mb-24">
+        <div class="flexy mb-3">
             <h1>{{ t('import_data') }}</h1>
         </div>
 

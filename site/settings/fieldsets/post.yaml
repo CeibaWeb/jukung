@@ -2,7 +2,7 @@ title: Blog Post
 hide: true
 fields:
   title:
-    type: title
+    type: text
     display: Title
     localizable: true
   sub_title:

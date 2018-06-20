@@ -1,4 +1,6 @@
+import Vue from 'vue';
 import Notifications from './mixins/Notifications.js';
+
 require('./components/NotificationBus');
 
 var vm = new Vue({
@@ -15,6 +17,9 @@ var vm = new Vue({
         draggingNonFile: false,
         sneakPeekViewport: null,
         sneakPeekFields: null,
+        windowWidth: null,
+        modalOpen: false,
+        showLoginModal: false
     },
 
     computed: {
@@ -27,7 +32,6 @@ var vm = new Vue({
         preview: function() {
             var self = this;
             self.$broadcast('previewing');
-            self.isPreviewing = true;
 
             this.sneakPeekViewport = $('.sneak-peek-viewport')[0];
             this.sneakPeekFields = $('.page-wrapper')[0];
@@ -35,10 +39,12 @@ var vm = new Vue({
             $('.sneak-peek-wrapper').addClass('animating on');
 
             this.wait(200).then(() => {
+                self.isPreviewing = true;
                 let width = localStorage.getItem('statamic.sneakpeek.width') || 400;
                 this.sneakPeekViewport.style.left = width + 'px';
                 this.sneakPeekFields.style.width = width + 'px';
                 $(this.$el).addClass('sneak-peeking');
+                this.$emit('livepreview.opened');
                 return this.wait(200);
             }).then(() => {
                 $('#sneak-peek-iframe').show();
@@ -50,7 +56,6 @@ var vm = new Vue({
         },
 
         stopPreviewing: function() {
-            this.isPreviewing = false;
             this.$broadcast('previewing.stopped');
 
             $('.sneak-peek-wrapper').addClass('animating');
@@ -66,6 +71,8 @@ var vm = new Vue({
                 $(this.$el).removeClass('sneak-peeking');
                 return this.wait(200);
             }).then(() => {
+                this.isPreviewing = false;
+                this.$emit('livepreview.closed');
                 $('.sneak-peek-wrapper').removeClass('on');
                 return this.wait(200);
             }).then(() => {
@@ -132,17 +139,8 @@ var vm = new Vue({
             this.sneakPeekFields.style.width = width + 'px';
 
             localStorage.setItem('statamic.sneakpeek.width', width);
-        },
 
-        stickyHeader() {
-            const header = $('.sticky').first();
-
-            if (! header.length) return;
-
-            document.addEventListener('scroll', (e) => {
-                const win = $(window);
-                header.parent().toggleClass('stuck', win.scrollTop() > 90);
-            });
+            this.$emit('livepreview.resizing', width);
         },
     },
 
@@ -167,7 +165,8 @@ var vm = new Vue({
         window.addEventListener('dragstart', this.dragStart);
         window.addEventListener('dragend', this.dragEnd);
 
-        this.stickyHeader();
+        this.windowWidth = document.documentElement.clientWidth;
+        window.addEventListener('resize', () => this.windowWidth = document.documentElement.clientWidth);
     },
 
     events: {
@@ -179,6 +178,14 @@ var vm = new Vue({
             } else {
                 window.onbeforeunload = null;
             }
+        },
+
+        'modal.open': function () {
+            this.modalOpen = true;
+        },
+
+        'modal.close': function () {
+            this.modalOpen = false;
         }
     }
 });

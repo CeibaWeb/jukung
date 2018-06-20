@@ -13,6 +13,7 @@ use Statamic\API\Helper;
 use Statamic\API\Path;
 use Statamic\API\Stache;
 use Statamic\API\Str;
+use Statamic\API\User;
 use Illuminate\Http\Request;
 use Statamic\Assets\AssetCollection;
 use Statamic\CP\Publish\ProcessesFields;
@@ -30,9 +31,17 @@ class AssetsController extends CpController
      */
     public function index()
     {
-        $this->access('assets:*:view');
+        $containers = collect();
 
-        $containers = AssetContainer::all();
+        foreach (AssetContainer::all() as $container) {
+            if (User::getCurrent()->can("assets:{$container->uuid()}:view")) {
+                $containers->push($container);
+            }
+        }
+
+        if ($containers->count() === 0) {
+            return redirect()->route('collections');
+        }
 
         return redirect()->route('assets.browse', $containers->first()->uuid());
     }
@@ -72,6 +81,8 @@ class AssetsController extends CpController
 
         // Grab all the assets from the container.
         $assets = $container->assets($path);
+
+        $assets = $this->sortAssets($assets);
 
         // Set up the paginator, since we don't want to display all the assets.
         $totalAssetCount = $assets->count();
@@ -127,6 +138,20 @@ class AssetsController extends CpController
         return [
             'assets' => $assets->toArray()
         ];
+    }
+
+    private function sortAssets($assets)
+    {
+        $sort = request('sort', 'title');
+        $dir = request('dir', 'desc');
+
+        return $assets->sortBy(function ($asset) use ($sort) {
+            if ($sort === 'title') {
+                return $asset->get('title', $asset->filename());
+            } else {
+                return $asset->$sort();
+            }
+        }, SORT_REGULAR, $dir === 'desc');
     }
 
     private function supplementAssetsForDisplay($assets)

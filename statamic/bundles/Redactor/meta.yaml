@@ -6,5 +6,7 @@ fieldtype_fields:
     allow_blank: true
   folder:
     type: asset_folder
+    width: 50
   restrict_assets:
     type: toggle
+    width: 50

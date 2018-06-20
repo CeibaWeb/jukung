@@ -13,6 +13,7 @@
                 :child-pages="page.items"
                 :collapsed.sync="page.collapsed"
                 :depth="depth"
+                :sortable="sortable"
         ></branch>
     </ul>
 </template>
@@ -27,7 +28,8 @@ export default {
             type: String,
             default: ''
         },
-        collapsed: Boolean
+        collapsed: Boolean,
+        sortable: Boolean
     },
 
     computed: {

@@ -1,0 +1,11 @@
+<div class="my-8 py-8 text-center">
+    {{ if url !== current_uri }}
+    <a href="{{ url }}" class="text-blue"><h1 class="my-4 font-mono uppercase text-5xl">{{ title }}</h1></a>
+    {{ else }}
+    <h1 class="my-4 font-mono uppercase text-4xl">{{ title }}</h1>
+    {{ /if }}
+    <span class="pt-2 w-full font-sans">
+        <p class="text-lg">{{ author | get:first_name }} {{ author | get:last_name }}</p>
+        <p>{{ date format_localized="%d %B %Y" }}</p>
+    </span>
+</div>

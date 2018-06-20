@@ -9,6 +9,9 @@ Route::group(['prefix' => CP_ROUTE . '/auth'], function () {
     get('logout', 'Auth\AuthController@getLogout')->name('logout');
     get('login/reset', 'Auth\AuthController@getPasswordReset')->name('login.reset');
     post('login/reset', 'Auth\AuthController@postPasswordReset');
+    get('token', function () {
+        return csrf_token();
+    });
 });
 
 /**
@@ -249,14 +252,15 @@ Route::group(['prefix' => CP_ROUTE, 'middleware' => ['auth']], function () {
     });
 
     // Fieldsets
+    Route::group(['prefix' => 'fieldsets-json'], function () {
+        get('/', 'FieldsetJsonController@index');
+        get('{fieldset}', 'FieldsetJsonController@show');
+        get('{fieldset}/edit', 'FieldsetJsonController@edit');
+    });
     Route::group(['prefix' => 'fieldsets'], function () {
-        get('get', 'FieldsetController@get')->name('fieldsets.get');
-        get('{fieldset}/get', 'FieldsetController@getFieldset')->name('fieldset.get');
-
         Route::group(['middleware' => 'configurable'], function () {
             get('/', 'FieldsetController@index')->name('fieldsets');
             get('/create', 'FieldsetController@create')->name('fieldset.create');
-            post('/update-layout/{fieldset}', 'FieldsetController@updateLayout')->name('fieldset.update-layout');
             delete('delete', 'FieldsetController@delete')->name('fieldsets.delete');
             post('quick', 'FieldsetController@quickStore');
             get('/{fieldset}', 'FieldsetController@edit')->name('fieldset.edit');

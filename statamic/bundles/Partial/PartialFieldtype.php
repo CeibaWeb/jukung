@@ -6,4 +6,5 @@ use Statamic\Extend\Fieldtype;
 
 class PartialFieldtype extends Fieldtype
 {
+    public $category = ['special'];
 }

@@ -20,7 +20,9 @@ class CacheTags extends Tags
         }
 
         // Create a hash so we can identify it. Include the URL in the hash if this is scoped to the page.
-        $hash = ($this->get('scope', 'site') === 'page') ? md5(URL::getCurrent(), $this->content) : md5($this->content);
+        $hash = ($this->get('scope', 'site') === 'page')
+            ? md5(URL::makeAbsolute(URL::getCurrent()) . $this->content)
+            : md5($this->content);
 
         $path = 'troves:' . $hash;
 

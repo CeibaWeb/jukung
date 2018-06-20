@@ -6,4 +6,5 @@ use Statamic\Extend\Fieldtype;
 
 class RadioFieldtype extends Fieldtype
 {
+    public $category = ['pickable', 'text'];
 }

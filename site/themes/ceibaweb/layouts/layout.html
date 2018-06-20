@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" <![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" style="font-size: 17px;"> <!--<![endif]-->
+    {{ partial:head }}
+    <body class="m-6">
+        {{ partial:home-link }}
+        {{ partial:right-nav }}
+        {{ partial:borders }}
+        <main class="h-full z-10">
+            {{ template_content }}
+        </main>
+        <script src="{{ theme:js }}"></script>
+    </body>
+</html>

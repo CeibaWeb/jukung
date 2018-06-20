@@ -57,10 +57,14 @@ class RotateTags extends Tags
 
         foreach ($values as $key => $value) {
             $repeating_values = explode(':', $value);
-            $repeat_count = array_get($repeating_values, 1, 1);
+            $repeat_count = array_get($repeating_values, 1, $repeating_values[0]);
 
-            for ($i = 1; $i <= $repeat_count; $i++) {
-                $switch_vars[] = $repeating_values[0];
+            if (is_numeric($repeat_count)) {
+                for ($i = 1; $i <= $repeat_count; $i++) {
+                    $switch_vars[] = $repeating_values[0];
+                }
+            } else {
+                $switch_vars[] = $repeating_values[0] .':'.$repeating_values[1];
             }
         }
 

@@ -23,6 +23,7 @@ class Manager
         'UserGroups',
         'AssetContainers',
         'Taxonomies',
+        'Terms',
     ];
 
     /**

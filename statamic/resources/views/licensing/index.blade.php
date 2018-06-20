@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="flexy mb-24">
+    <div class="flexy mb-3">
         <h1 class="fill">Licensing</h1>
         <a href="{{ route('licensing.refresh') }}" class="btn btn-primary">Refresh</a>
     </div>

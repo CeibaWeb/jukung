@@ -6,6 +6,8 @@ use Statamic\Extend\Fieldtype;
 
 class SectionFieldtype extends Fieldtype
 {
+    public $category = ['special'];
+
     public function canBeLocalized()
     {
         return false;

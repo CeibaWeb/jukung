@@ -40,6 +40,7 @@ class Kernel extends ConsoleKernel
        'Statamic\Console\Commands\Generators\Addon\ComposerMakeCommand',
        'Statamic\Console\Commands\Generators\Addon\WidgetMakeCommand',
        'Statamic\Console\Commands\Generators\Addon\ControllerMakeCommand',
+       'Statamic\Console\Commands\Generators\Addon\SuggestMakeCommand',
        'Statamic\Console\Commands\Generators\UserMakeCommand',
        'Statamic\Console\Commands\Generators\FieldsetMakeCommand',
        'Statamic\Console\Commands\Generators\AssetContainerMakeCommand',

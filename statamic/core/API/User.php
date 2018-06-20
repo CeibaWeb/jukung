@@ -17,6 +17,18 @@ class User
     }
 
     /**
+     * Pluck specific values off users
+     *
+     * @param string $value
+     * @param string $key
+     * @return \Illuminate\Support\Collection
+     */
+    public static function pluck($value, $key = null)
+    {
+        return collect(static::all()->toArray())->pluck($value, $key);
+    }
+
+    /**
      * Get a user by ID
      *
      * @param string $id

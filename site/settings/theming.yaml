@@ -1,9 +1,9 @@
-theme: jukung
+theme: ceibaweb
 smartypants: false
 allow_php: false
 markdown_hard_wrap: false
-default_layout: default
-default_page_template: default
+default_layout: layout
+default_page_template: template
 default_entry_template: post
 default_taxonomy_template: taxonomy
 error_template_folder: errors

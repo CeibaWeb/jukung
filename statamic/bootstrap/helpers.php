@@ -5,6 +5,7 @@ use Statamic\API\Str;
 use Statamic\API\URL;
 use Statamic\API\File;
 use Statamic\API\Path;
+use Statamic\API\User;
 use Statamic\API\Config;
 use Michelf\SmartyPants;
 use Statamic\Extend\API;
@@ -112,7 +113,7 @@ function cp_route($route, $params = [])
         return null;
     }
 
-    return route($route, $params, false);
+    return route($route, $params);
 }
 
 function cp_resource_url($url)
@@ -292,6 +293,11 @@ function collect_users($value = [])
     return new \Statamic\Data\Users\UserCollection($value);
 }
 
+function me()
+{
+    return User::getCurrent();
+}
+
 /**
  * Gets an addon's API class if it exists, or creates a temporary generic addon class.
  *
@@ -331,14 +337,12 @@ function col_class($width)
 /**
  * SVG helper
  *
- * Outputs a tag to reference a symbol in the sprite.
- *
  * @param string $name Name of svg
  * @return string
  */
 function svg($name)
 {
-    return '<svg><use xlink:href="#'.$name.'" /></svg>';
+    return inline_svg($name);
 }
 
 /**
@@ -377,7 +381,7 @@ function active_for($url)
  */
 function nav_is($url)
 {
-    $current = URL::getCurrent();
+    $current = URL::makeAbsolute(URL::getCurrentWithQueryString());
 
     return $url === $current || Str::startsWith($current, $url . '/');
 }
@@ -701,4 +705,54 @@ if (! function_exists('mb_str_word_count')) {
                 break;
         }
     };
+}
+
+/**
+ * Convert a PHP date format into one suitable for moment.js
+ * Adapted from https://stackoverflow.com/a/30192680/1569621
+ *
+ * @param string $format
+ * @return string
+ **/
+function to_moment_js_date_format($format)
+{
+    return strtr($format, [
+        'd' => 'DD',
+        'D' => 'ddd',
+        'j' => 'D',
+        'l' => 'dddd',
+        'N' => 'E',
+        'S' => 'o',
+        'w' => 'e',
+        'z' => 'DDD',
+        'W' => 'W',
+        'F' => 'MMMM',
+        'm' => 'MM',
+        'M' => 'MMM',
+        'n' => 'M',
+        't' => '', // no equivalent
+        'L' => '', // no equivalent
+        'o' => 'YYYY',
+        'Y' => 'YYYY',
+        'y' => 'YY',
+        'a' => 'a',
+        'A' => 'A',
+        'B' => '', // no equivalent
+        'g' => 'h',
+        'G' => 'H',
+        'h' => 'hh',
+        'H' => 'HH',
+        'i' => 'mm',
+        's' => 'ss',
+        'u' => 'SSS',
+        'e' => 'zz', // deprecated since version 1.6.0 of moment.js
+        'I' => '', // no equivalent
+        'O' => '', // no equivalent
+        'P' => '', // no equivalent
+        'T' => '', // no equivalent
+        'Z' => '', // no equivalent
+        'c' => '', // no equivalent
+        'r' => '', // no equivalent
+        'U' => 'X',
+    ]);
 }

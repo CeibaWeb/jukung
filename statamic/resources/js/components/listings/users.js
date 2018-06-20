@@ -13,15 +13,17 @@ module.exports = {
                 sortOrder: 'asc',
                 partials: {
                     cell: `
-                        <a v-if="$index === 0" :href="item.edit_url">
-                            <span class="status status-{{ (item.status === 'active') ? 'live' : 'hidden' }}"
-                                  :title="(item.status === 'active') ? translate('cp.status_active') : translate('cp.status_pending')"
+                        <span :class="{ 'has-status-icon': $index === 0 }">
+                            <span v-if="$index === 0" class="status status-{{ (item.status === 'active') ? 'live' : 'hidden' }}"
+                                :title="(item.status === 'active') ? translate('cp.status_active') : translate('cp.status_pending')"
                             ></span>
-                            {{ item[column.label] }}
-                        </a>
-                        <template v-else>
-                            {{ item[column.label] }}
-                        </template>`
+                            <a v-if="column.link" :href="item.edit_url" class="has-status-icon">
+                                {{{ formatValue(item[column.value]) }}}
+                            </a>
+                            <template v-else>
+                                {{{ formatValue(item[column.value]) }}}
+                            </template>
+                        </span>`
                 }
             }
         }

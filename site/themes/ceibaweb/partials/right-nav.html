@@ -1,0 +1,79 @@
+<div class="nav hidden sm:flex items-center fixed pin-t pin-r mr-8 mt-1 z-40">
+    <p class="font-mono uppercase cursor-pointer select-none mr-4"><a href="/contact" class="no-underline text-black">Contact</a></p>
+    <p class="font-mono uppercase cursor-pointer select-none mr-4"><a href="/about" class="no-underline text-black">About</a></p>
+    <div id="nav-bar" class="mr-4">
+        <nav-bar inline-template>
+            <span class="relative">
+                <p @click="onToggle" @mouseover="show = true" class="font-mono uppercase cursor-pointer select-none">Content</p>
+                <transition name="nav">
+                    <div v-if="show" @mouseleave="show = false" class="bg-white absolute pin-l pin-t mt-4 px-2 flex flex-col">
+                        {{ pages url="content" }}
+                            <a href="{{ url }}" class="no-underline hover:no-underline text-black py-1">
+                                <p class="uppercase font-mono">{{ title }}</p>
+                            </a>
+                        {{ /pages }}
+                    </div>
+                </transition>
+            </span>
+        </nav-bar>
+    </div>
+    {{ assets path="assets" folder="site"}}
+        <div class="h-6 w-6 mr-4">
+            <a href="https://{{filename}}.com/ceibaweb" class="h-full w-full">
+                <img class="w-full h-full" src="{{ url }}" alt="">
+            </a>
+        </div>
+    {{ /assets }} 
+    {{#
+        {{ locales }}
+            {{ if locale_full !== locale:full }}
+                <a href="{{ url }}" class="h-6 w-6 -mt-2"><span class="flag flag-{{ locale:key }} h-full"></span></a>
+            {{ /if }}
+        {{ /locales }}
+     #}}
+</div>
+
+<div class="sm:hidden fixed pin-t pin-r mr-8 mt-2 z-40" id="nav-panel">
+    <nav-bar inline-template>
+        <span>
+            <p @click="onToggle">&#9776;</p>
+            <div v-if="show" @click="show = false" class="fixed h-screen w-screen z-40 pin-r pin-t pin-l pin-b" style="background-color: rgba(0, 0, 0, .3);"></div>
+            <transition name="panel">
+                <nav v-if="show" @click.stop class="z-50 fixed h-full pin-r pin-t pin-b bg-white px-4 pt-4 flex flex-col items-center">
+                    <a href="/contact" class="no-underline hover:no-underline text-black">
+                        <p class="uppercase font-mono py-1">Contact</p>
+                    </a>
+                    <a href="/about" class="no-underline hover:no-underline text-black">
+                        <p class="uppercase font-mono py-1">About</p>
+                    </a>
+                    {{ pages url="content" }}
+                        <a href="{{ url }}" class="no-underline hover:no-underline text-black">
+                            <p class="uppercase font-mono py-1">{{ title }}</p>
+                        </a>
+                    {{ /pages }}
+                </nav>
+            </transition>
+        </span>
+    </nav-bar>
+</div>
+
+<style>
+.nav-enter-active, 
+.nav-leave-active {
+    transition: all .2s;
+}
+
+.nav-enter, .nav-leave-to {
+    opacity: 0;
+    transform: translateY(-1rem);
+}
+
+.panel-enter-active, .panel-leave-active {
+    transition: all .4s;
+}
+
+.panel-enter, .panel-leave-to {
+    opacity: 0;
+    transform: translateX(1rem);
+}
+</style>

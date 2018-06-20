@@ -1,15 +1,15 @@
-app_key: mylhxJzW3iMaJHs7fgS5Nxf0nCWLSZKB
 locales:
   en:
     name: English
     full: en_US
     url: /
-license_key: ""
+  es:
+    full: es_MX
+    name: Spanish
+    url: /es/
 timezone: UTC
 date_format: F jS, Y
 default_extension: md
-send_powered_by_header: true
-ensure_unique_ids: false
 filesystems:
   content:
     driver: local
@@ -24,6 +24,7 @@ filesystems:
     driver: local
     root: site/themes
     url: /site/themes
+app_key: mylhxJzW3iMaJHs7fgS5Nxf0nCWLSZKB
 redactor:
   - 
     name: Standard
@@ -42,5 +43,10 @@ redactor:
       buttons:
         - bold
         - italic
-csrf_exclude: [ ]
+send_powered_by_header: true
+ensure_unique_ids: false
+license_key: ""
+csrf_exclude:
+  - '/!/Fetch/*'
 php_max_memory_limit: null
+yaml_parser: spyc

@@ -1,0 +1,14 @@
+<section class="min-h-half mx-auto flex flex-col md:flex-row items-center bg-pattern relative">
+  <div class="w-full md:w-1/2">
+    {{ collection from="tutorials|analyses|editorial|case_studies"  limit="1" offset="1" }}
+      {{ partial:home/recent-post right="true" }}
+    {{ /collection }}
+  </div>
+  <div class="w-full md:w-1/2">
+    {{ collection from="tutorials|analyses|editorial|case_studies"  limit="3" as="articles" }}
+      {{ articles skip="2"}}
+        {{ partial:home/recent-post left="true" }}
+      {{ /articles }}
+    {{ /collection }}
+  </div>  
+</section>

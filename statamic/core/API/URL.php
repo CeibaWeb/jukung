@@ -228,12 +228,32 @@ class URL
      */
     public static function makeAbsolute($url)
     {
-        // If it doesn't start with a slash, we'll just leave it as-is.
-        if (! Str::startsWith($url, '/')) {
+        // If it starts with a protocol, we'll just leave it as-is.
+        if (preg_match('/^(?:(ht|f)tp(s?)\:\/\/)/', $url)) {
             return $url;
         }
 
-        return self::tidy(Str::ensureLeft($url, self::getSiteUrl()));
+        // Get the root URL as defined in the config.
+        // This may be relative (eg. `/` or `/subdir/`) or absolute (eg. `http://example.com/`)
+        $siteUrl = Config::getSiteUrl();
+
+        // Make sure URLs have trailing slashes.
+        $url = Str::ensureLeft($url, '/');
+        $siteUrl = Str::ensureRight($siteUrl, '/');
+
+        // If the given URL already contains the site root, we'll remove it. For example,
+        // if you were to do `URL::makeAbsolute('/subdir/foo')` and the site root is
+        // `/subdir/` we don't want to end up with `/subdir/subdir/foo`
+        if (Str::startsWith($url, $siteUrl)) {
+            $url = Str::removeLeft($url, $siteUrl);
+        }
+
+        // If the provided root url is relative, build up the actual root by using the request.
+        if (Str::startsWith($siteUrl, '/')) {
+            $siteUrl = request()->getSchemeAndHttpHost() . $siteUrl;
+        }
+
+        return self::tidy($siteUrl . $url);
     }
 
     /**
@@ -244,6 +264,22 @@ class URL
     public static function getCurrent()
     {
         return format_url(app('request')->path());
+    }
+
+    /**
+     * Get the current URL with query string
+     *
+     * @return string
+     */
+    public static function getCurrentWithQueryString()
+    {
+        $url = self::getCurrent();
+
+        if ($qs = request()->getQueryString()) {
+            $url .= '?' . $qs;
+        }
+
+        return $url;
     }
 
     /**
@@ -268,25 +304,6 @@ class URL
             Str::ensureRight($url, '/'),
             self::prependSiteUrl('/')
         );
-    }
-
-    /**
-     * Get the current site url from Apache headers
-     * @return string
-     */
-    public static function getSiteUrl()
-    {
-        if (app()->runningInConsole()) {
-            return '/';
-        }
-
-        $protocol = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443)
-            ? "https://"
-            : "http://";
-
-        $domain_name = array_get($_SERVER, 'HTTP_HOST') . '/';
-
-        return $protocol . $domain_name;
     }
 
     /**

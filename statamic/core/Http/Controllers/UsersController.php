@@ -14,8 +14,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class UsersController extends CpController
 {
-    use GetsTaxonomiesFromFieldsets;
-
     /**
      * @var \Statamic\Contracts\Data\Users\User|\Statamic\Contracts\Permissions\Permissible
      */
@@ -79,7 +77,7 @@ class UsersController extends CpController
 
         return [
             'items'   => $users->toArray(),
-            'columns' => ['name', 'username', 'email'],
+            'columns' => Config::get('users.columns', ['name', 'username', 'email']),
             'pagination' => [
                 'totalItems' => $totalUserCount,
                 'itemsPerPage' => $perPage,
@@ -121,7 +119,6 @@ class UsersController extends CpController
             'locale'            => default_locale(),
             'is_default_locale' => true,
             'locales'           => [],
-            'taxonomies'        => $this->getTaxonomies(Fieldset::get($fieldset))
         ]);
     }
 
@@ -170,7 +167,6 @@ class UsersController extends CpController
             'locale'            => default_locale(),
             'is_default_locale' => true,
             'locales'           => [],
-            'taxonomies'         => $this->getTaxonomies($this->user->fieldset())
         ]);
     }
 

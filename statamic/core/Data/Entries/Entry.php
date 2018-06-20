@@ -194,9 +194,7 @@ class Entry extends Content implements EntryContract
     public function date()
     {
         if ($this->orderType() !== 'date') {
-            throw new InvalidEntryTypeException(
-                sprintf('Cannot get the date on an non-date based entry: [%s]', $this->path())
-            );
+            return null;
         }
 
         if (substr_count($this->order(), '-') < 1) {
@@ -339,16 +337,16 @@ class Entry extends Content implements EntryContract
         parent::supplement();
 
         if ($this->orderType() === 'date') {
-            $this->supplements['date'] = $this->date();
-            $this->supplements['datestring'] = $this->date()->__toString();
-            $this->supplements['datestamp'] = $this->date()->timestamp;
-            $this->supplements['timestamp'] = $this->date()->timestamp;
-            $this->supplements['has_timestamp'] = $this->hasTime();
+            $this->setSupplement('date', $this->date());
+            $this->setSupplement('datestring', $this->date()->__toString());
+            $this->setSupplement('datestamp', $this->date()->timestamp);
+            $this->setSupplement('timestamp', $this->date()->timestamp);
+            $this->setSupplement('has_timestamp', $this->hasTime());
         }
 
-        $this->supplements['order_type'] = $this->orderType();
-        $this->supplements['collection'] = $this->collectionName();
-        $this->supplements['is_entry'] = true;
-        $this->supplements['last_modified'] = $this->lastModified()->timestamp;
+        $this->setSupplement('order_type', $this->orderType());
+        $this->setSupplement('collection', $this->collectionName());
+        $this->setSupplement('is_entry', true);
+        $this->setSupplement('last_modified', $this->lastModified()->timestamp);
     }
 }

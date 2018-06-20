@@ -6,4 +6,5 @@ use Statamic\Addons\Relate\RelateFieldtype;
 
 class FormFieldtype extends RelateFieldtype
 {
+    public $category = ['relationship'];
 }

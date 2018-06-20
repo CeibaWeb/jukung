@@ -19,6 +19,16 @@ class RelateTags extends CollectionTags
     {
         $var = explode(':', $this->tag, 2)[1];
 
+        return $this->collect($var);
+    }
+
+    public function index()
+    {
+        return $this->collect($this->get('field'));
+    }
+
+    private function collect($var)
+    {
         $this->collection = collect_content();
 
         $values = Helper::ensureArray(array_get($this->context, $var, []));

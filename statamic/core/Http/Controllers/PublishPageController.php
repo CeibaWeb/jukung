@@ -31,6 +31,9 @@ class PublishPageController extends PublishController
 
         $fieldset = $request->query('fieldset', $parent->fieldset()->name());
 
+        $data = $this->addBlankFields(Fieldset::get($fieldset));
+        $data['slug'] = null;
+
         return view('publish', [
             'title'             => t('create_page'),
             'uuid'              => null,
@@ -45,8 +48,7 @@ class PublishPageController extends PublishController
             'locale'            => $this->locale($request),
             'locales'           => $this->getLocales(),
             'fieldset'          => $fieldset,
-            'content_data'      => $this->addBlankFields(Fieldset::get($fieldset)),
-            'taxonomies'        => $this->getTaxonomies(Fieldset::get($fieldset)),
+            'content_data'      => $data,
             'suggestions'       => $this->getSuggestions(Fieldset::get($fieldset)),
         ]);
     }
@@ -69,6 +71,7 @@ class PublishPageController extends PublishController
         $locale = $this->locale($request);
         $page   = $page->in($locale)->get();
         $data   = $this->addBlankFields($page->fieldset(), $page->processedData());
+        $data['slug'] = $page->slug();
 
         return view('publish', [
             'is_new'            => false,
@@ -76,16 +79,14 @@ class PublishPageController extends PublishController
             'content_type'      => 'page',
             'fieldset'          => $page->fieldset()->name(),
             'title'             => array_get($data, 'title', $url),
-            'title_display_name' => array_get($page->fieldset()->fields(), 'title.display', t('title')),
             'uuid'              => $page->id(),
             'uri'               => $page->uri(),
             'url'               => $page->url(),
-            'slug'              => $page->slug(),
+            'slug'              => $data['slug'],
             'status'            => $page->published(),
             'locale'            => $locale,
             'is_default_locale' => $page->isDefaultLocale(),
             'locales'           => $this->getLocales($page->id()),
-            'taxonomies'        => $this->getTaxonomies($page->fieldset()),
             'extra'             => [
                 'is_home'    => $page->uri() === '/',
                 'parent_url' => URL::parent($url)
@@ -105,11 +106,18 @@ class PublishPageController extends PublishController
     {
         $parameters = ['url' => ltrim($page->url(), '/')];
 
-        if (! $request->continue) {
-            return route('pages');
+        if ($request->continue) {
+            return route('page.edit', $parameters);
         }
 
-        return route('page.edit', $parameters);
+        if ($request->another) {
+            return route('page.create', [
+                'parent' => request('extra.parent_url'),
+                'fieldset' => request('fieldset')
+            ]);
+        }
+
+        return route('pages');
     }
 
     /**

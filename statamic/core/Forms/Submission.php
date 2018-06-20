@@ -40,7 +40,7 @@ class Submission implements SubmissionContract
     public function id($id = null)
     {
         if (is_null($id)) {
-            return $this->id ?: time();
+            return $this->id ?: microtime(true);
         }
 
         $this->id = $id;
@@ -214,9 +214,7 @@ class Submission implements SubmissionContract
             }
 
             // Define the attribute (friendly name) so it doesn't appear as field.fieldname
-            $attributes[$field_name] = translate('cp.attribute_field_name', [
-                'attribute' => array_get($field_config, 'display', $field_name),
-            ]);
+            $attributes[$field_name] = array_get($field_config, 'display', $field_name);
         }
 
         $validator = app('validator')->make($data, $rules, [], $attributes);

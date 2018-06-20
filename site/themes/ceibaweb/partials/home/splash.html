@@ -1,0 +1,34 @@
+<section class="h-new-screen flex flex-col-reverse md:flex-row">
+    <div class="w-full md:w-1/2 h-three-quarters md:h-full md:pr-8 md:pl-4 flex flex-col justify-around md:justify-around font-mono bg-white">
+        <div class="h-1/5 w-full flex flex-col justify-end">
+            <h2 id="typewriter" class="uppercase text-orange text-2xl md:text-5xl"></h2>
+        </div>
+        <h2 class="uppercase opacity-50 text-xl md:text-3xl md:mt-0 md:pb-8">When Cookie-Cutter Doesn't <span class=>Cut It</span></h2>
+        <div class="w-4/5 md:text-lg">
+            <p class="pb-4">With Ceiba Web, you get the full power of technology without the confusion.</p>
+            <p class="">From idea to execution, we build digital tools to overcome challenges and forge new opportunities.</p>
+        </div>
+        <div class="">
+            <a class="bg-blue hover:bg-white hover:text-blue text-xl text-white hover:text-white px-8 py-1 text-center lowercase no-underline hover:no-underline shadow-lg hover:shadow-none hover:border-2 hover:border-grey" href="/contact">Let's Connect</a>
+        </div>
+    </div>
+    <div class="image w-full md:w-1/2 h-quarter md:h-auto">
+        <div class="w-full h-full bg-image-splash bg-cover bg-center" style="background-image: url('{{ glide :id='global:splash_image:0' contrast='30' }}');"></div>
+    </div>
+</section>
+
+<script>
+const typedWords = {{ typed_words | to_json }}
+const el = document.getElementById('typewriter')
+
+const typewriter = new Typewriter(el, {
+    loop: true,
+    cursor: '_'
+})
+
+typedWords.forEach(function(word) {
+    typewriter.typeString(word).pauseFor(1200).deleteAll()
+})
+
+typewriter.start()
+</script>

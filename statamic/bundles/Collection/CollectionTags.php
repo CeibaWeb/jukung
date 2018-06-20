@@ -133,6 +133,14 @@ class CollectionTags extends Tags
     {
         $collections = Helper::ensureArray($collection);
 
+        if (in_array('*', $collections)) {
+            $collections = Collection::handles();
+
+            if ($exclude = $this->getList(['not_from', 'not_folder', 'dont_use'])) {
+                $collections = array_diff($collections, $exclude);
+            }
+        }
+
         foreach ($collections as $collection) {
             if (! Collection::handleExists($collection)) {
                 throw new \Exception("Collection [$collection] doesn't exist.");
@@ -176,7 +184,7 @@ class CollectionTags extends Tags
             array_get($this->context, 'page.default_slug'),
             array_get($this->context, 'page.taxonomy')
         );
-        
+
         return ($data) ? $data->collection() : $data;
     }
 
@@ -211,7 +219,8 @@ class CollectionTags extends Tags
             // Term slugs may be provided as a string, which may be pipe delimited.
             // They may also reference a field, which means at this point the value may already be an array.
             $terms = (is_string($terms)) ? Helper::explodeOptions($terms) : $terms;
-            $terms = array_filter($terms);
+
+            $terms = ($terms) ? array_filter($terms) : $terms;
 
             return compact('taxonomy', 'method', 'terms');
         });
@@ -481,6 +490,9 @@ class CollectionTags extends Tags
 
     private function paginate()
     {
+        // No limit, no pagination.
+        if ( ! $this->limit) return;
+
         $this->paginated = true;
 
         // Keep track of how many items were in the collection before pagination chunks it up.
@@ -508,8 +520,7 @@ class CollectionTags extends Tags
 
         $paginator = new LengthAwarePaginator($items, $count, $this->limit, $page);
 
-        $paginator->setPath(URL::getCurrent());
-
+        $paginator->setPath(URL::makeAbsolute(URL::getCurrent()));
         $paginator->appends(Request::all());
 
         $this->pagination_data = [
@@ -625,7 +636,9 @@ class CollectionTags extends Tags
         if (! $this->collection) {
             $collection = $this->get(['collection', 'in']);
 
-            $this->collection = Entry::whereCollection($collection)->values();
+            $this->collection = Entry::whereCollection($collection)
+                ->localize($this->get('locale', site_locale()))
+                ->values();
         }
 
         if ($this->getBool('supplement_taxonomies', true)) {
@@ -642,12 +655,12 @@ class CollectionTags extends Tags
             return $this->parseNoResults();
         }
 
-        $current = Str::ensureLeft($this->get('current', URL::getCurrent()), '/');
+        $current = URL::makeAbsolute($this->get('current', URL::getCurrent()));
         $current_index = null;
 
         // Get the index of the 'current' entry
         foreach ($this->collection as $index => $entry) {
-            if ($entry->url() === $current) {
+            if ($entry->absoluteUrl() === $current) {
                 $current_index = $index;
                 break;
             }

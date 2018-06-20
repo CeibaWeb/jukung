@@ -7,6 +7,8 @@ use Statamic\Addons\Relate\RelateFieldtype;
 
 class UsersFieldtype extends RelateFieldtype
 {
+    public $category = ['relationship'];
+
     public function preProcess($data)
     {
         if ($data === 'current') {

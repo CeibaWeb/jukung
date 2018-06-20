@@ -34,23 +34,23 @@ class EntryPublisher extends Publisher
     {
         $rules = [
             'fields.title' => 'required',
-            'slug' => "required|alpha_dash|entry_slug_exists:{$this->collection},{$this->request->uuid}",
+            'fields.slug' => "required|alpha_dash|entry_slug_exists:{$this->collection},{$this->request->uuid}",
         ];
 
         if ($this->getEntryOrderType() === 'date') {
             // 24 hour validation, hat tip to:
             // http://www.mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
-            $rules['extra.datetime'] = ['required', 'regex:/^\d{4}-\d{2}-\d{2}(?: ([01][0-9]|2[0-3]):[0-5][0-9])?$/'];
+            $rules['fields.date'] = ['required', 'regex:/^\d{4}-\d{2}-\d{2}(?: ([01][0-9]|2[0-3]):[0-5][0-9])?$/'];
         }
 
         $messages = [
-            'extra.datetime.regex' => 'The Date/time field must be a valid 24 hour time (HH:MM).'
+            'fields.date.regex' => 'The Date/time field must be a valid 24 hour time (HH:MM).'
         ];
 
         $this->validate($rules, $messages, [
             'fields.title' => $this->getTitleDisplayName(),
-            'slug' => 'Slug',
-            'extra.datetime' => 'Date/Time'
+            'fields.slug' => 'Slug',
+            'fields.date' => 'Date/Time'
         ]);
     }
 
@@ -68,6 +68,12 @@ class EntryPublisher extends Publisher
         } else {
             $this->prepForExistingEntry();
         }
+
+        // As part of the prep, we'll apply the date and slug. We'll remove them
+        // from the fields array since we don't want it to be in the YAML.
+        unset($this->fields['date'], $this->fields['slug']);
+
+        $this->fieldset = $this->content->fieldset()->withTaxonomies();
     }
 
     /**
@@ -129,7 +135,7 @@ class EntryPublisher extends Publisher
             return null;
         }
 
-        $date = $this->request->input('extra.datetime');
+        $date = $this->request->input('fields.date');
 
         // If there's a time, adjust the format into a datetime order string.
         if (strlen($date) > 10) {
@@ -157,7 +163,7 @@ class EntryPublisher extends Publisher
         }
 
         if ($order_type === 'number') {
-            return Entry::whereCollection($this->collection)->count() + 1;
+            return Entry::whereCollection($this->collection)->multisort('order')->last()->order() + 1;
         }
     }
 }

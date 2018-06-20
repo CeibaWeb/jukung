@@ -4,8 +4,10 @@ namespace Statamic\Console\Commands\Update;
 
 use Statamic\Updater\Updater;
 use Illuminate\Console\Command;
+use Symfony\Component\Process\Process;
 use Statamic\Updater\ZipDownloadedException;
 use Statamic\Console\Commands\AbstractCommand;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class UpdateStatamicCommand extends AbstractCommand
 {
@@ -148,7 +150,16 @@ class UpdateStatamicCommand extends AbstractCommand
     {
         $this->comment('Cleaning up...');
 
-        $this->updater->cleanUp();
+        $process = new Process(vsprintf('%s please update:housekeeping --from=%s', [
+            PHP_BINARY, STATAMIC_VERSION
+        ]));
+
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            $this->crossLine('Something went wrong while cleaning up.');
+            throw new ProcessFailedException($process);
+        }
 
         $this->checkLine('All clean.');
     }

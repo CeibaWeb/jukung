@@ -75,12 +75,28 @@ abstract class DataCollection extends IlluminateCollection
      */
     protected function getSortableValues($sort, $a, $b)
     {
-        $method = Str::camel($sort);
+        return [
+            $this->normalizeSortableValue($this->getSortableValue($a, $sort)),
+            $this->normalizeSortableValue($this->getSortableValue($b, $sort))
+        ];
+    }
 
-        $one = (method_exists($a, $method)) ? call_user_func([$a, $method]) : $a->getWithDefaultLocale($sort);
-        $two = (method_exists($b, $method)) ? call_user_func([$b, $method]) : $b->getWithDefaultLocale($sort);
+    /**
+     * Get the value from a content object to be sorted
+     *
+     * @param \Statamic\Contracts\Data\Data $item The data objec
+     * @param string                        $key  The field to be searched
+     * @return mixed
+     */
+    private function getSortableValue($item, $key)
+    {
+        if (method_exists($item, 'getSupplement') && ($supplement = $item->getSupplement($key))) {
+            return $supplement;
+        }
 
-        return [$this->normalizeSortableValue($one), $this->normalizeSortableValue($two)];
+        $method = Str::camel($key);
+
+        return (method_exists($item, $method)) ? call_user_func([$item, $method]) : $item->getWithDefaultLocale($key);
     }
 
     /**
@@ -144,7 +160,7 @@ abstract class DataCollection extends IlluminateCollection
     {
         // If a callable is specified as the first parameter, we'll expect that it'll
         // return an associative array of values to be merged into the supplements.
-        if (is_callable($key)) {
+        if ($key instanceof \Closure) {
             return $this->supplementMany($key);
         }
 

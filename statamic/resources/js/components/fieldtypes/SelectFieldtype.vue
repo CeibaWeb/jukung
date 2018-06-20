@@ -8,7 +8,7 @@
 
 <script>
 
-module.exports = {
+export default {
 
     mixins: [Fieldtype],
 
@@ -32,7 +32,11 @@ module.exports = {
 
     computed: {
         label: function() {
-            var option = _.findWhere(this.selectOptions, {value: this.data});
+            // type juggle to make sure integers are treated as thus.
+            var val = _.isNumber(this.data) ? parseInt(this.data) : this.data;
+
+            var option = _.findWhere(this.selectOptions, {value: val});
+
             return (option) ? option.text : this.data;
         }
     },

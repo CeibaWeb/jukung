@@ -95,9 +95,9 @@ abstract class Tags
     {
         foreach ($params as $param => $value) {
             // Values in parameters prefixed with a colon should be treated as the corresponding
-            // field's value in the context. If it doesn't exist, the value remains the literal.
+            // field's value in the context. As with all variables, it is null by default.
             if (Str::startsWith($param, ':')) {
-                $params[substr($param, 1)] = array_get($this->context, $value, $value);
+                $params[substr($param, 1)] = array_get($this->context, $value, null);
                 unset($params[$param]);
             }
 
@@ -204,21 +204,7 @@ abstract class Tags
      */
     protected function formOpen($action)
     {
-        $attr_str = '';
-        if ($attrs = $this->getList('attr')) {
-            foreach ($attrs as $attr) {
-                $bits = explode(':', $attr);
-
-                $param = array_get($bits, 0);
-                $value = array_get($bits, 1);
-
-                $attr_str .= $param;
-
-                if ($value) {
-                    $attr_str .= '="' . $value . '" ';
-                }
-            }
-        }
+        $attr_str = $this->getAttributeString();
 
         if ($this->getBool('files')) {
             $attr_str .= 'enctype="multipart/form-data"';
@@ -229,5 +215,24 @@ abstract class Tags
         $html = '<form method="POST" action="'.$action.'" '.$attr_str.'>'.csrf_field();
 
         return $html;
+    }
+
+    protected function getAttributeString()
+    {
+        $attr_str = '';
+
+        if ($attrs = $this->getList('attr')) {
+            foreach ($attrs as $attr) {
+                $bits = explode(':', $attr);
+
+                $param = array_get($bits, 0);
+                $value = array_get($bits, 1);
+
+                $attr_str .= $param;
+                $attr_str .= ($value) ? '="' . $value . '" ' : ' ';
+            }
+        }
+
+        return $attr_str;
     }
 }

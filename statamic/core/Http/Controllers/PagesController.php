@@ -23,7 +23,9 @@ class PagesController extends CpController
      */
     public function pages()
     {
-        $this->access('pages:view');
+        if (!me()->can('pages:view')) {
+            return redirect()->route('assets');
+        }
 
         $this->ensureHome();
 

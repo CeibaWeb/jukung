@@ -9,7 +9,7 @@
 var CodeMirror = require('codemirror');
 require('codemirror/mode/yaml/yaml');
 
-module.exports = {
+export default {
 
     mixins: [Fieldtype],
 

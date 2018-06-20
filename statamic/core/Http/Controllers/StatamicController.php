@@ -270,7 +270,7 @@ class StatamicController extends Controller
         // Remove ignored segments
         $segments = explode('/', $segments);
         $ignore = array_get(Config::getRoutes(), 'ignore', []);
-        $remove_segments = array_intersect_key($ignore, $segments);
+        $remove_segments = array_intersect($ignore, $segments);
         $segments = join('/', array_diff($segments, $remove_segments));
 
         return $segments;

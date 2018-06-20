@@ -11,6 +11,13 @@ body {
     color: $color_gray_dark;
 	font-family: $font;
     font-size: 16px;
+    width: 100%;
+}
+
+*, *::before, *::after {
+    border-width: 0;
+    border-style: solid;
+    border-color: $color_border;
 }
 
 // svg sprite
@@ -30,17 +37,13 @@ body > svg { display: none; }
 }
 
 .cp-head {
-	position: relative;
-	display: flex;
-    align-items: center;
-	padding: 24px;
-    margin-bottom: 8px;
+    @apply .flex .items-center .relative .p-3;
 	font-size: 14px;
 
     .logo {
         display: block;
-        margin-right: 88px;
         height: 32px;
+        width: 200px;
         display: flex;
         align-items: center;
         svg {
@@ -97,7 +100,7 @@ body > svg { display: none; }
     }
 
     .cp-head .logo {
-        margin-right: 28px;
+        width: 140px;
     }
 }
 

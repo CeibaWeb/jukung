@@ -32,7 +32,7 @@ import RelatePanes from './RelatePanesFieldtype.vue'
 import RelateTags from './RelateTagsFieldtype.vue'
 import GetsSuggestKey from '../GetsSuggestKey';
 
-module.exports = {
+export default {
 
     mixins: [Fieldtype, GetsSuggestKey],
 

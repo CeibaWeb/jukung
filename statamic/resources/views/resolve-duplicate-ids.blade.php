@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <h1 class="mb-24">{{ t('duplicate_id_title')}}</h1>
+    <h1 class="mb-3">{{ t('duplicate_id_title')}}</h1>
 
     @if ($duplicates->isEmpty())
         <div class="card flexy">

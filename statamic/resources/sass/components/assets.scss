@@ -514,6 +514,7 @@
     .svg-icon {
         height: 150px;
         width: 150px;
+        margin: 0 auto;
     }
 }
 
@@ -652,7 +653,7 @@
 .asset-selector {
     display: flex;
     flex-direction: column;
-    max-height: 93vh;
+    height: 100%;
     background: white;
     box-shadow: 0 0 15px rgba(black, .5);
 
@@ -665,6 +666,7 @@
         overflow: auto;
         height: auto;
         max-height: 100%;
+        flex: 1;
     }
 
     .asset-browser {
@@ -692,8 +694,12 @@
     left: 0;
     bottom: 0;
     padding: 30px;
-    background: rgba(#333, .8);
+    background: rgba($color_dark_blue, .33);
     z-index: 1000;
+
+    .asset-selector {
+        border-radius: 4px;
+    }
 
     .modal-footer {
         box-shadow: 0 -2px 10px rgba(0,0,0,.05);
@@ -712,13 +718,15 @@
     left: 0;
     bottom: 0;
     padding: 30px;
-    background: rgba(#333, .8);
+    background: rgba($color_dark_blue, .33);
     z-index: 1000;
     will-change: transform;
+    cursor: auto;
 
     .asset-editor {
         height: 100%;
         box-shadow: 0 0 15px rgba(black, .5);
+        border-radius: 4px;
     }
 }
 
@@ -775,6 +783,7 @@
         border-left: 1px solid $border;
         padding: 10px 30px;
         color: $color_gray_light;
+        cursor: text;
 
         &.one-line {
             display: flex;

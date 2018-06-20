@@ -1,0 +1,14 @@
+sections:
+  main:
+    display: Main
+    fields:
+      featured_categories:
+        type: collections
+        display: Featured Categories
+      typed_words:
+        type: list
+        display: Typed Words
+taxonomies: false
+title: Home
+create_title: ""
+hide: true

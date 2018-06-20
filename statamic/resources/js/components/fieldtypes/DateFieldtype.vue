@@ -29,8 +29,10 @@
 </template>
 
 <script>
+import moment from 'moment';
+import Calendar from 'baremetrics-calendar';
 
-module.exports = {
+export default {
 
     mixins: [Fieldtype],
 
@@ -157,6 +159,11 @@ module.exports = {
                 element: $(self.$el).find('.daterange'),
                 current_date: moment(date),
                 earliest_date: this.config.earliest_date || "January 1, 1900",
+                format: {
+                    input: this.config.input_format || Statamic.dateFormat,
+                    jump_month: 'MMMM',
+                    jump_year: 'YYYY'
+                },
                 callback: function() {
                     var newDate = moment(this.current_date).format('YYYY-MM-DD');
                     self.updateDateString(newDate);

@@ -35,8 +35,13 @@ class FieldtypesController extends CpController
                     $c[$field->getName()] = $field->preProcess($c[$field->getName()]);
                 }
 
-                $c['display'] = trans("fieldtypes/{$fieldtype->getHandle()}.{$c['name']}");
-                $c['instructions'] = markdown(trans("fieldtypes/{$fieldtype->getHandle()}.{$c['name']}_instruct"));
+                if ($fieldtype->isFirstParty()) {
+                    $c['display'] = trans("fieldtypes/{$fieldtype->getHandle()}.{$c['name']}");
+                    $c['instructions'] = markdown(trans("fieldtypes/{$fieldtype->getHandle()}.{$c['name']}_instruct"));
+                } else {
+                    $c['display'] = trans('addons.'.$fieldtype->getFieldtypeName().'::fieldtypes.'.$c['name']);
+                    $c['instructions'] = markdown(trans('addons.'.$fieldtype->getFieldtypeName().'::fieldtypes.'.$c['name'].'_instruct'));
+                }
 
                 $config[] = $c;
             }
@@ -48,6 +53,8 @@ class FieldtypesController extends CpController
                 'canBeLocalized' => $fieldtype->canBeLocalized(),
                 'canHaveDefault' => $fieldtype->canHaveDefault(),
                 'config' => $config,
+                'categories' => $fieldtype->category,
+                'icon' => $fieldtype->getIcon(),
             ];
         }
 

@@ -44,3 +44,7 @@ csrf_exclude: []
 # The max amount of memory Statamic will try to use when performing memory intensive
 # operations like image manipulation. Leave null to use as much memory as possible.
 php_max_memory_limit: null
+
+# The YAML parser.
+# Available options: "symfony" for YAML 1.2, or "spyc" for YAML 1.0
+yaml_parser: spyc

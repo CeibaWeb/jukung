@@ -9,6 +9,8 @@ class ListsFieldtype extends Fieldtype
 {
     protected $snake_name = 'list';
 
+    public $category = ['special', 'structured', 'text'];
+
     public function preProcess($data)
     {
         if (is_null($data)) {

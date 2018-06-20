@@ -1,0 +1,7 @@
+{{ collection:portfolio as="portfolio"}}
+<section id="portfolio-slider" class="h-three-quarters relative">
+    <div class="absolute w-full mt-8 text-white text-xl font-bold z-20 font-sans lowercase pin-t pin-l text-center">Portfolio</div>
+    <portfolio-slider v-bind:slides='{{ portfolio | to_json }}'></portfolio-slider>
+</section>
+{{ /collection:portfolio }} 
+

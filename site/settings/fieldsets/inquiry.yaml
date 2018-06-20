@@ -1,0 +1,19 @@
+sections:
+  main:
+    display: Main
+    fields:
+      name:
+        type: text
+        display: Name
+      choice:
+        type: text
+        display: Choice
+      comment:
+        type: textarea
+        display: Comment
+      contact:
+        type: text
+        display: Contact
+taxonomies: true
+title: Inquiry
+create_title: ""

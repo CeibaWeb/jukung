@@ -94,12 +94,8 @@ class UserRegistrar
 
         $username_rules = array_get($fields, 'username.validate');
 
-        // Get all the usernames so we can prevent a duplicate from being used.
-        $usernames = User::all()->map(function ($user) {
-            return $user->username();
-        });
-
-        $username_rules = ltrim($username_rules . '|not_in:' . $usernames->implode(','), '|');
+        // Ensure the username is unique.
+        $username_rules = ltrim($username_rules . '|not_in:' . User::pluck('username')->implode(','), '|');
 
         // Ensure the username field is required. We'll break it into an array and rejoin it so
         // we can avoid duplication if the fieldset already contained required validation.
@@ -112,9 +108,11 @@ class UserRegistrar
             unset($fields['username']);
         }
 
-        // If there's an email field, make sure it is validated as one.
+        // If there's an email field, ensure it's a unique and valid email.
         if (isset($fields['email'])) {
-            $email_rules = $this->appendRule('email', array_get($fields, 'email.validate'));
+            $email_rules = array_get($fields, 'email.validate');
+            $email_rules = ltrim($email_rules . '|not_in:' . User::pluck('email')->implode(','), '|');
+            $email_rules = $this->appendRule('email', $email_rules);
             array_set($fields, 'email.validate', $email_rules);
         }
 
@@ -124,7 +122,7 @@ class UserRegistrar
             'validate' => 'required|confirmed'
         ]);
 
-        $this->fieldset->fields($fields);
+        $this->fieldset = Fieldset::create('user', ['fields' => $fields]);
     }
 
     /**

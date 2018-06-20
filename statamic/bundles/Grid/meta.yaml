@@ -7,8 +7,10 @@ fieldtype_fields:
       stacked: Stacked
   max_rows:
     type: integer
+    width: 50
   min_rows:
     type: integer
+    width: 50
   add_row:
     type: text
   fields:

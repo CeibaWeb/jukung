@@ -6,7 +6,7 @@
         </ul>
     </div>
 
-    <div class="flexy mb-24">
+    <div class="flexy mb-3">
         <h1 class="fill" v-if="isNew">{{ translate('cp.creating_asset_container') }}</h1>
         <h1 class="fill" v-else>{{ translate('cp.editing_asset_container') }}</h1>
         <button type="submit" class="btn btn-primary" @click="save">{{ translate('cp.save') }}</button>

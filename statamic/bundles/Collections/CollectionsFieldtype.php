@@ -6,5 +6,5 @@ use Statamic\Addons\Relate\RelateFieldtype;
 
 class CollectionsFieldtype extends RelateFieldtype
 {
-
+    public $category = ['relationship'];
 }

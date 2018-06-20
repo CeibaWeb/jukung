@@ -6,4 +6,5 @@ use Statamic\Extend\Fieldtype;
 
 class MarkdownFieldtype extends Fieldtype
 {
+    public $category = ['text'];
 }
