@@ -6,4 +6,5 @@ use Statamic\Extend\Fieldtype;
 
 class VideoFieldtype extends Fieldtype
 {
+    public $category = ['media'];
 }

@@ -1,0 +1,14 @@
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Another awesome Statamic site">
+    <title>{{ if url === homepage }}{{ site_name }}{{ else }}{{ title }}{{ /if }}</title>
+    <link rel="stylesheet" href="{{ theme:css }}">
+<link href="https://fonts.googleapis.com/css?family=Inconsolata|Source+Sans+Pro" rel="stylesheet">
+    {{ partial:flags-css }}
+    {{ partial:favicon }}
+    {{ partial:utility/open-graph }}
+    {{ theme:js src="typewriter" tag="true" }}
+    <script>window.csrf_token = "{{ csrf_token }}"</script>
+</head>

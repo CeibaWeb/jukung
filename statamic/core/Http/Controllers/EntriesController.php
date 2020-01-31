@@ -7,6 +7,7 @@ use Statamic\API\Entry;
 use Statamic\API\Config;
 use Statamic\API\Helper;
 use Statamic\API\Collection;
+use Statamic\CP\ColumnSupplementor;
 use Statamic\Presenters\PaginationPresenter;
 
 /**
@@ -47,7 +48,7 @@ class EntriesController extends CpController
         $sort = 'title';
         $sort_order = 'asc';
         if ($collection->order() === 'date') {
-            $sort = 'datestamp';
+            $sort = 'date';
             $sort_order = $collection->get('sort_dir', 'desc');
         } elseif ($collection->order() === 'number') {
             $sort = 'order';
@@ -101,23 +102,17 @@ class EntriesController extends CpController
 
         // Set up the columns that the Vue component will be expecting. A developer may customize these
         // columns in the collection's configuration file, but if left blank we will set the defaults.
-        $columns = array_get($collection->data(), 'columns', ['title', 'slug']);
+        $defaultColumns = ['title', 'slug'];
 
         // Special handling for date based collections.
         if ($collection->order() === 'date') {
-            // Add a formatted date to each entry that will be used as the the displayed value.
-            // We name this date_col_header to make it clearer in the translation files what
-            // you are actually translating. The field names end up as the header string.
             $format = Config::get('cp.date_format');
-            $entries->supplement('date_col_header', function ($entry) use ($format) {
+            $entries->supplement('date', function ($entry) use ($format) {
                 return $entry->date()->format($format);
             });
 
-            // Add a date column, which is displayed using the above formatted and
-            // supplemented date, but will actually use the datestamp for sorting.
-            $columns[] = ['label' => 'date_col_header', 'field' => 'datestamp'];
-
-            $sort = 'datestamp';
+            $defaultColumns[] = 'date';
+            $sort = 'date';
             $sortOrder = 'desc';
         }
 
@@ -125,6 +120,9 @@ class EntriesController extends CpController
         if ($collection->order() === 'number') {
             $columns[] = 'order';
         }
+
+        $columns = array_get($collection->data(), 'columns', $defaultColumns);
+        $entries = (new ColumnSupplementor)->supplement($columns, $entries);
 
         // Custom sorting will override anything predefined.
         if ($customSort = $this->request->sort) {

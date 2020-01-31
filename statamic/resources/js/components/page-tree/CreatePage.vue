@@ -1,20 +1,22 @@
 <template>
-    <modal :show.sync="show" :saving="saving" :loading="loading" class="modal-small">
-        <template slot="header">{{ translate('cp.choose_page_type') }}</template>
+    <div>
+        <modal :show.sync="show" :saving="saving" :loading="loading" class="modal-small">
+            <template slot="header">{{ translate('cp.choose_page_type') }}</template>
 
-        <template slot="body">
-            <ul class="chooser">
-                <li v-for="fieldset in fieldsets">
-                    <a href='' @click.prevent="create(fieldset.value)">{{ fieldset.text }}</a>
-                </li>
-            </ul>
-        </template>
+            <template slot="body">
+                <ul class="chooser">
+                    <li v-for="fieldset in fieldsets">
+                        <a href='' @click.prevent="create(fieldset.value)">{{ fieldset.text }}</a>
+                    </li>
+                </ul>
+            </template>
 
-        <template slot="footer">
-            <div class="pull-left">{{ translate('cp.parent_page') }}: <code>{{ parent }}</code></div>
-            <button type="button" class="btn" @click="cancel">{{ translate('cp.cancel') }}</button>
-        </template>
-    </modal>
+            <template slot="footer">
+                <div class="pull-left">{{ translate('cp.parent_page') }}: <code>{{ parent }}</code></div>
+                <button type="button" class="btn" @click="cancel">{{ translate('cp.cancel') }}</button>
+            </template>
+        </modal>
+    </div>
 </template>
 
 <script>
@@ -35,7 +37,6 @@ export default {
     events: {
         'pages.create': function(parent) {
             this.loading = true;
-            this.show = true;
             this.parent = parent;
             this.getFieldsets();
         }
@@ -59,7 +60,7 @@ export default {
         },
 
         getFieldsets: function() {
-            var url = cp_url('fieldsets/get?url='+this.parent+'&hidden=false');
+            var url = cp_url('fieldsets-json?url='+this.parent+'&hidden=false');
 
             this.$http.get(url, function(data) {
                 var fieldsets = [];
@@ -83,6 +84,13 @@ export default {
 
                 this.fieldsets = fieldsets;
                 this.loading = false;
+
+                // If there's only one fieldset, don't make the user have to pick it.
+                if (this.fieldsets.length <= 1) {
+                    this.create(this.fieldsets[0].value);
+                } else {
+                    this.show = true;
+                }
             });
         }
     }

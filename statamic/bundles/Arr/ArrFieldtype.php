@@ -8,6 +8,8 @@ class ArrFieldtype extends Fieldtype
 {
     protected $snake_name = 'array';
 
+    public $category = ['structured'];
+
     public function blank()
     {
         return [];

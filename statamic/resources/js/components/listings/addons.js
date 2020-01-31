@@ -12,10 +12,10 @@ module.exports = {
                 checkboxes: false,
                 partials: {
                     cell: `
-                        <a :href="item.settings_url" v-if="item.settings_url && column.field === 'name'">{{ item[column.label] }}</a>
+                        <a :href="item.settings_url" v-if="item.settings_url && column.value === 'name'">{{ item[column.value] }}</a>
                         <template v-else>
-                            <template v-if="column.field === 'installed'">{{ item.installed ? '✔' : '✘' }}</template>
-                            <template v-else>{{ item[column.label] }}</template>
+                            <template v-if="column.value === 'installed'">{{ item.installed ? '✔' : '✘' }}</template>
+                            <template v-else>{{ item[column.value] }}</template>
                         </template>
                     `,
                     actions: `

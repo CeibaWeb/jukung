@@ -33,14 +33,14 @@ class TaxonomyPublisher extends Publisher
     {
         $rules = [
             'fields.title' => 'required',
-            'slug' => 'required|alpha_dash'
+            'fields.slug' => 'required|alpha_dash'
         ];
 
         $messages = [];
 
         $this->validate($rules, $messages, [
             'fields.title' => $this->getTitleDisplayName(),
-            'slug' => 'Slug'
+            'fields.slug' => 'Slug'
         ]);
     }
 

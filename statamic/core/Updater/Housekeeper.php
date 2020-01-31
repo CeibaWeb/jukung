@@ -20,6 +20,8 @@ class Housekeeper
         Updates\MigrateTaxonomies::class,
         Updates\MigrateTaxonomyFields::class,
         Updates\AddViewPermissions::class,
+        Updates\MigrateMetaFields::class,
+        Updates\MoveTopLevelTaxonomiesIntoFields::class,
     ];
 
     /**

@@ -1,8 +1,45 @@
 title: Default Globals
 hide: true
-fields:
-  site_name:
-    type: text
-    display: Website Name
-    instructions: The name of your website
-    localizable: true
+sections:
+  main:
+    display: Main
+    fields:
+      site_name:
+        type: text
+        display: Website Name
+        instructions: The name of your website
+        localizable: true
+      splash_image:
+        container: flags
+        folder: /
+        restrict: false
+        type: assets
+        display: Splash Image
+      homepage_features:
+        mode: table
+        fields:
+          title:
+            type: text
+            display: Title
+            conditions:
+              style: standard
+              conditions: [ ]
+          description:
+            type: text
+            display: Description
+            conditions:
+              style: standard
+              conditions: [ ]
+          icon:
+            container: main
+            folder: /
+            restrict: false
+            max_files: 1
+            type: assets
+            display: Icon
+            conditions:
+              style: standard
+              conditions: [ ]
+        type: grid
+        display: Homepage Features
+taxonomies: true

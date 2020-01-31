@@ -6,4 +6,5 @@ use Statamic\Extend\Fieldtype;
 
 class TextareaFieldtype extends Fieldtype
 {
+    public $category = ['text'];
 }

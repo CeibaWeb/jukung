@@ -5,7 +5,7 @@
         <slot name="divider-start"></slot>
 
         <div class="list-group">
-            <div class="list-group-item group-header bard-drag-handle" :class="{'collapsed': isHidden}" @dblclick="toggle" v-if="! goingSolo">
+            <div class="list-group-item group-header pl-3 bard-drag-handle" :class="{'collapsed': isHidden}" @dblclick="toggle" v-if="! goingSolo">
                 <div class="flexy">
                     <div class="fill">
                         <div class="flexy baseline">
@@ -29,10 +29,9 @@
                 </div>
             </div>
 
-            <div v-show="!isHidden || goingSolo" :class="{'list-group-item': ! goingSolo}" v-if="config.fields.length">
-                <div class="row">
-                    <div v-for="field in config.fields" class="{{ colClass(field.width) }}">
-                        <div class="form-group {{ field.type }}-fieldtype">
+            <div v-show="!isHidden || goingSolo" :class="{'list-group-item p-0': ! goingSolo}" v-if="config.fields.length">
+                <div class="publish-fields p-1">
+                    <div v-for="field in config.fields" :class="fieldClasses(field)">
                             <div :class="{'bard-drag-handle': goingSolo}">
                                 <label v-if="hasMultipleFields" class="block" :class="{'bold': field.bold}">
                                     <template v-if="field.display">{{ field.display }}</template>
@@ -43,12 +42,11 @@
                                 <small class="help-block" v-if="field.instructions" v-html="field.instructions | markdown"></small>
                             </div>
 
-                            <component :is="field.type + '-fieldtype'"
+                            <component :is="componentName(field.type)"
                                     :name="parentName + '.' + index + '.' + field.name"
                                     :data.sync="data[field.name]"
                                     :config="field">
                             </component>
-                        </div>
                     </div>
                 </div>
             </div>

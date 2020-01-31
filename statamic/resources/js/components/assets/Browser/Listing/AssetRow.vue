@@ -13,11 +13,7 @@
             </div>
         </td>
 
-        <td class="title-col">
-            <span v-if="asset.title !== asset.filename" :title="asset.basename">{{ asset.title }}</span>
-            <span v-else>{{ asset.basename }}</span>
-        </td>
-
+        <td class="title-col">{{ asset.title || asset.basename }}</td>
         <td class="size-col extra-col">{{ asset.size_formatted }}</td>
         <td class="modifed-col extra-col">{{ asset.last_modified_formatted }}</td>
 

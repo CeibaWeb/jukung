@@ -7,4 +7,5 @@ use Statamic\Extend\Fieldtype;
 
 class TableFieldtype extends Fieldtype
 {
+    public $category = ['structured', 'text'];
 }

@@ -5,12 +5,11 @@
 
     <script>
         <?php
-            $taxonomies = isset($taxonomies) ? $taxonomies : [];
             $suggestions = isset($suggestions) ? $suggestions : [];
         ?>
         Statamic.Publish = {
+            locale: '{!! $locale !!}',
             contentData: {!! json_encode($content_data) !!},
-            taxonomies: {!! json_encode($taxonomies) !!},
             suggestions: {!! json_encode($suggestions) !!}
         };
     </script>
@@ -29,7 +28,6 @@
              locale="{{ $locale }}"
              locales="{{ json_encode($locales) }}"
              :is-default-locale="{{ bool_str($is_default_locale) }}"
-             title-display-name="{{ isset($title_display_name) ? $title_display_name : t('title') }}"
              :remove-title="true"
     ></publish>
 

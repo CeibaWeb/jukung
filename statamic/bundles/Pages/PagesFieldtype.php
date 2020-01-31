@@ -6,5 +6,5 @@ use Statamic\Addons\Relate\RelateFieldtype;
 
 class PagesFieldtype extends RelateFieldtype
 {
-
+    public $category = ['structured'];
 }

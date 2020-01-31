@@ -7,6 +7,8 @@ use Statamic\Extend\Fieldtype;
 
 class SuggestFieldtype extends Fieldtype
 {
+    public $category = ['pickable', 'relationship'];
+
     public function blank()
     {
         return [];

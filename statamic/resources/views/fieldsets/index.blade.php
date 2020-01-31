@@ -4,7 +4,7 @@
 
     <fieldset-listing inline-template v-cloak>
         <div>
-            <div class="flexy mb-24">
+            <div class="flexy mb-3">
                 <h1 class="fill">{{ translate('cp.nav_fieldsets') }}</h1>
                 <a href="{{ route('fieldset.create') }}" class="btn btn-primary">{{ translate('cp.create_fieldset_button') }}</a>
             </div>

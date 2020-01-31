@@ -3,6 +3,7 @@
 namespace Statamic\Forms\Uploaders;
 
 use Statamic\API\File;
+use Statamic\API\Path;
 
 class FileUploader extends Uploader
 {
@@ -45,14 +46,14 @@ class FileUploader extends Uploader
      */
     private function getDestination($file)
     {
-        $basename = $file->getClientOriginalName();
-        $filename = pathinfo($basename)['filename'];
-        $destination = $this->config->get('destination');
-        $path = $destination . '/' . $basename;
+        $extension = $file->getClientOriginalExtension();
+        $filename  = Path::safeFilename($file->getClientOriginalName());
+
+        $directory = $this->config->get('destination');
+        $path      = Path::tidy($directory . '/' . $filename . '.' . $extension);
 
         if (File::exists($path)) {
-            $basename = $filename . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $path = $destination . '/' . $basename;
+            $path = Path::appendTimestamp($path);
         }
 
         return $path;

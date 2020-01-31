@@ -1,0 +1,12 @@
+title: Topics
+sections:
+  main:
+    display: Main
+    fields:
+      title:
+        display: Title
+        type: text
+      color:
+        type: text
+        display: Color
+taxonomies: false

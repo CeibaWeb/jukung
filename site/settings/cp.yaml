@@ -1,18 +1,17 @@
 widgets:
   -
     type: collection
-    collection: blog
+    collection: editorial
     limit: 5
   -
     type: collection
-    collection: things
+    collection: case_studies
     limit: 5
   -
-    type: form
-    form: contact
+    type: collection
+    collection: analyses
     limit: 5
-    title: Recent Submissions
-    width: full
-    fields:
-      - name
-      - email
+  -
+    type: collection
+    collection: tutorials
+    limit: 5

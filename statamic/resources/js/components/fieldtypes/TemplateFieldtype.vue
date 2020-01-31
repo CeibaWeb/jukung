@@ -9,7 +9,7 @@
 </template>
 
 <script>
-module.exports = {
+export default {
 
     props: ['data', 'config', 'name'],
 

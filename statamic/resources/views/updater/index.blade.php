@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <div class="flexy mb-24">
+    <div class="flexy mb-3">
         <h1 class="fill">{{ translate('cp.nav_updater') }}</h1>
         @if (version_compare($latest->tag_name, STATAMIC_VERSION, '>'))
             <a href="{{ route('updater.confirm', $latest->tag_name) }}" class="btn btn-primary">{{ translate('cp.upgrade_to_latest') }}</a>

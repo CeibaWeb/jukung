@@ -90,7 +90,8 @@ class Parser
 
         // The parseConditionals method executes any PHP in the text, so clean it up.
         if (! $allowPhp) {
-            $text = str_replace(['<?', '?>'], ['&lt;?', '?&gt;'], $text);
+            $text = str_replace(['<?', '?>', '<%', '%>'], ['&lt;?', '?&gt;', '&lt;%', '%&gt;'], $text);
+            $text = preg_replace('/<script(?:.*)language="php"(?:.*)>.*<\/script>/', '', $text);
         }
 
         // <statamic>

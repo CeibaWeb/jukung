@@ -2,6 +2,7 @@
 
 namespace Statamic\API;
 
+use Stringy\Stringy;
 use League\Flysystem\Util;
 
 /**
@@ -266,6 +267,48 @@ class Path
         $parts = explode('/', self::directory($path));
 
         return last($parts);
+    }
+
+    /**
+     * Get filename
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function filename($path)
+    {
+        return pathinfo($path, PATHINFO_FILENAME);
+    }
+
+    /**
+     * Get safe filename
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function safeFilename($path)
+    {
+        $str = Stringy::create(self::filename($path))->toAscii();
+
+        $str = preg_replace(['/[^\w\(\).-]/i', '/(_)\1+/'], '-', $str);
+        $str = rtrim($str, '-');
+        $str = strtolower($str);
+
+        return (string) $str;
+    }
+
+    /**
+     * Append timestamp
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function appendTimestamp($path)
+    {
+        $extension = self::extension($path);
+        $timestamp = time();
+
+        return preg_replace("/(.*)\.({$extension})$/", "$1-{$timestamp}.$2", $path);
     }
 
     /**

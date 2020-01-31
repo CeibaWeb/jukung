@@ -2,12 +2,27 @@ title: Long Form Post
 hide: true
 fields:
   title:
-    type: title
+    type: text
     display: Title
-  template:
-    type: hidden
-    default: blog/long_form
+    localizable: true
+  splash_image:
+    type: assets
+    display: Splash Image
+    container: main
+    folder: img
+    restrict: false
+    max_files: 1
+  description:
+    type: textarea
+    validate: between:50,300
+    display: SEO Description
+    lines: 3
+  author:
+    display: Author
+    type: users
+    default: current
   long_form:
+    localizable: true
     type: bard
     display: Long Form Content
     sets:
@@ -26,8 +41,8 @@ fields:
             type: radio
             default: Normal
             options:
-              - Normal
-              - Oversized
+              Normal: Normal
+              Oversized: Oversized
       quote:
         display: Pull Quote
         fields:
@@ -37,3 +52,17 @@ fields:
           cite:
             type: text
             display: Cite
+      code:
+        display: Github Gist
+        fields:
+          link:
+            display: Link
+            type: text
+    spellcheck: false
+    allow_source: false
+    autoLink: false
+    target_blank: false
+    link_validation: false
+    force_plain_text: false
+    clean_pasted_html: false
+    restrict_assets: false

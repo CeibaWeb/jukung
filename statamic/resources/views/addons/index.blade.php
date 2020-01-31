@@ -5,14 +5,14 @@
     <addon-listing inline-template v-cloak>
         <div>
 
-            <div class="flexy mb-24">
+            <div class="flexy mb-3">
                 <h1 class="fill">{{ t('manage_addons') }}</h1>
                 <div class="controls">
                     <button @click="refresh" class="btn btn-primary">{{ trans('cp.refresh') }}</button>
                 </div>
             </div>
 
-            <div class="card flush">
+            <div class="card flush dossier-for-mobile">
                 <template v-if="noItems">
                     <div class="no-results">
                         <span class="icon icon-power-plug"></span>

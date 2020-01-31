@@ -1,0 +1,8 @@
+{{ partial:home/splash }}
+{{ partial:home/features }}
+{{ partial:home/recent-posts}}
+{{ collection from="editorial|analyses|tutorials|case_studies" scope="entry" }}
+    <section class="w-full {{ if index !== 1 }} pt-8 {{ /if }} mb-8">
+        {{ partial:single }}
+    </section>
+{{ /collection }}

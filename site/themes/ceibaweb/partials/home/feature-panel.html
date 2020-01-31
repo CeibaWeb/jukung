@@ -1,0 +1,9 @@
+<div id="feature-{{ index }}" class="md:flex-1 py-4 {{ partial:utility/feature-panel-border }}">
+    <div class="h-full flex flex-col items-center justify-center">
+        <h4 class="w-full text-center font-sans pb-8 lowercase">{{ title }}</h4>
+        <div class="w-full flex justify-center svg">{{ feature:icon | output }}</div>
+    </div>
+</div>
+
+{{ partial:utility/svg-animation }}
+

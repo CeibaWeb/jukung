@@ -1,0 +1,16 @@
+routes:
+  /:
+    uses: index
+    as: favicon
+
+  post@generate:
+    uses: generate
+    as: favicon.gen
+
+  callback:
+    uses: callback
+    as: favicon.callback
+
+  remove:
+    uses: remove
+    as: favicon.remove

@@ -1,0 +1,33 @@
+title: Contact
+hide: true
+sections:
+  main:
+    display: Main
+    fields: 
+      choices:
+        mode: table
+        fields:
+          title:
+            type: text
+            display: Title
+            conditions:
+              style: standard
+              conditions: [ ]
+          description:
+            type: text
+            display: Description
+            conditions:
+              style: standard
+              conditions: [ ]
+          icon:
+            container: main
+            folder: /svg/
+            restrict: false
+            max_files: 1
+            type: assets
+            display: Icon
+            conditions:
+              style: standard
+              conditions: [ ]
+        type: grid
+        display: Choices

@@ -54,10 +54,12 @@ class ConvertEmailLoginCommand extends Command
         // For all user files, remove the email value from the data, use it
         // as the filename for the new file, and delete the old file.
         $files->each(function ($data, $username) use ($bar) {
-            $email = $data['email'];
-            unset($data['email']);
-            File::disk('users')->put($email.'.yaml', YAML::dump($data));
-            File::disk('users')->delete($username.'.yaml');
+            if (! str_contains($username, '@')) {
+                $email = $data['email'];
+                unset($data['email']);
+                File::disk('users')->put($email.'.yaml', YAML::dump($data));
+                File::disk('users')->delete($username.'.yaml');
+            }
             $bar->advance();
         });
 

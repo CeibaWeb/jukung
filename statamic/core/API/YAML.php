@@ -3,6 +3,7 @@
 namespace Statamic\API;
 
 use Spyc;
+use Symfony\Component\Yaml\Yaml as SymfonyYaml;
 
 /**
  * Parsing and dumping YAML
@@ -26,10 +27,27 @@ class YAML
             $yaml = $split[0];
             $content = ltrim(array_get($split, 1, ''));
 
-            return Spyc::YAMLLoadString($yaml) + ['content' => $content];
+            return self::parseYaml($yaml) + ['content' => $content];
         }
 
-        return Spyc::YAMLLoadString($str);
+        return self::parseYaml($str);
+    }
+
+    private static function parseYaml($yaml)
+    {
+        return (Config::get('system.yaml_parser') === 'symfony')
+            ? self::parseSymfony($yaml)
+            : self::parseSpyc($yaml);
+    }
+
+    private static function parseSpyc($yaml)
+    {
+        return Spyc::YAMLLoadString($yaml);
+    }
+
+    private static function parseSymfony($yaml)
+    {
+        return SymfonyYaml::parse($yaml);
     }
 
     /**
@@ -41,8 +59,9 @@ class YAML
      */
     public static function dump($data, $content = false)
     {
-        $yaml = Spyc::YAMLDump($data, 2, 100);
-        $yaml = substr($yaml, 4); // remove the initial fencing by spyc
+        $yaml = (Config::get('system.yaml_parser') === 'symfony')
+            ? self::dumpSymfony($data)
+            : self::dumpSpyc($data);
 
         if ($content) {
             $fenced = "---".PHP_EOL . $yaml . "---".PHP_EOL;
@@ -50,5 +69,17 @@ class YAML
         }
 
         return $yaml ?: '';
+    }
+
+    private static function dumpSymfony($data)
+    {
+        return SymfonyYaml::dump($data, 100, 2, SymfonyYaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+    }
+
+    private static function dumpSpyc($data)
+    {
+        $yaml = Spyc::YAMLDump($data, 2, 100);
+        $yaml = substr($yaml, 4); // remove the initial fencing by spyc
+        return $yaml;
     }
 }

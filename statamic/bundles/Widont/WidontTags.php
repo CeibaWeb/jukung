@@ -9,6 +9,6 @@ class WidontTags extends Tags
 {
     public function index()
     {
-        return Helper::widont($this->content);
+        return Helper::widont($this->content, $this->get('words'));
     }
 }

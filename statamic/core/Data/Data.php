@@ -668,11 +668,12 @@ abstract class Data implements DataContract
      *
      * @param string $key   Key to set
      * @param mixed  $value Value to set
+     * @param boolean $override Whether to override the value if one was already set
      * @return $this|mixed
      */
-    public function setSupplement($key, $value)
+    public function setSupplement($key, $value, $override = false)
     {
-        $this->supplements[$key] = $value;
+        $this->supplements[$key] = $override ? $value : array_get($this->supplements, $key, $value);
 
         return $this;
     }
@@ -748,18 +749,18 @@ abstract class Data implements DataContract
 
             $terms = $this->getWithDefaultLocale($taxonomy_handle);
 
-            $this->supplements[$taxonomy_handle.'_raw'] = $terms;
+            $this->setSupplement($taxonomy_handle.'_raw', $terms);
 
             // Do nothing if there's a blank field.
             if ($terms == '') {
                 return;
             }
 
-            $terms = collect($terms)->map(function ($term) use ($taxonomy_handle) {
+            $terms = collect_content($terms)->map(function ($term) use ($taxonomy_handle) {
                 return Term::whereSlug(Term::normalizeSlug($term), $taxonomy_handle);
             });
 
-            $this->supplements[$taxonomy_handle] = $terms->all();
+            $this->setSupplement($taxonomy_handle, $terms->localize($this->locale)->all());
         });
     }
 }

@@ -10,6 +10,8 @@ use Statamic\Addons\Relate\RelateFieldtype;
 
 class TaxonomyFieldtype extends RelateFieldtype
 {
+    public $category = ['relationship'];
+
     /**
      * Pre-process the fieldtype
      *

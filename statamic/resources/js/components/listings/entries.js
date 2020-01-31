@@ -1,7 +1,7 @@
 import HasLocaleSelector from '../HasLocaleSelector';
 import HasShowDraftsSelector from '../HasShowDraftsSelector';
 
-module.exports = {
+export default {
 
     mixins: [HasLocaleSelector, HasShowDraftsSelector, Dossier],
 

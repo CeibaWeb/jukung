@@ -1,0 +1,21 @@
+sections:
+  main:
+    display: Main
+    fields:
+      short_summary:
+        type: text
+        localizable: true
+        display: Short Summary
+      long_summary:
+        type: text
+        localizable: true
+        display: Long Summary
+      hero_image:
+        container: main
+        folder: /
+        restrict: false
+        type: assets
+        display: Hero Image
+taxonomies: true
+title: Series
+create_title: Start New Series

@@ -5,6 +5,7 @@ namespace Statamic\CP\Publish;
 use Statamic\API\User;
 use Statamic\API\Config;
 use Statamic\API\Helper;
+use Statamic\API\Fieldset;
 
 class UserPublisher extends Publisher
 {
@@ -46,10 +47,10 @@ class UserPublisher extends Publisher
             // Updating an existing user
             $this->prepForExistingUser();
 
+            $this->addUserValidation('existing');
+
             $this->content->username($username);
             $this->content->email($email);
-
-            $this->addUserValidation('existing');
         }
 
         $this->content->groups($groups);
@@ -95,7 +96,7 @@ class UserPublisher extends Publisher
 
         $fields = $this->addBasicUserValidation($fields);
 
-        $fieldset->fields($fields);
+        $fieldset = Fieldset::create('user', ['fields' => $fields]);
 
         $this->content->fieldset($fieldset);
     }
@@ -136,17 +137,7 @@ class UserPublisher extends Publisher
      */
     private function addNewUserValidation($fields)
     {
-        $rules = array_get($fields, 'username.validate');
-
-        $usernames = User::all()->map(function ($user) {
-            return $user->username();
-        });
-
-        $rules = ltrim($rules . '|not_in:' . $usernames->implode(','), '|');
-
-        array_set($fields, 'username.validate', $rules);
-
-        return $fields;
+        return $this->addUniqueUserValidation($fields, User::all());
     }
 
     /**
@@ -157,23 +148,39 @@ class UserPublisher extends Publisher
      */
     private function addExistingUserValidation($fields)
     {
-        $rules = array_get($fields, 'username.validate');
-
-        // Get all the usernames, except for the user being edited.
-        // Obviously it's okay for the user being edited to have the same username.
-        $usernames = User::all()->map(function ($user) {
-            return $user->username();
-        })->reject(function ($username) {
-            return $username === $this->content->username();
+        // Get all users, except for the user being edited.
+        // Obviously it's okay for the user being edited to have the same username/email.
+        $users = User::all()->reject(function ($user) {
+            return $user->id() === $this->content->id();
         });
 
-        // Only apply the rule if there are usernames. If there is only one
-        // user in the system, then the array will be empty at this point.
-        if (! $usernames->isEmpty()) {
-            $rules = ltrim($rules . '|not_in:' . $usernames->implode(','), '|');
+        return $this->addUniqueUserValidation($fields, $users);
+    }
+
+    /**
+     * Add unique user validation to ensure no duplicate usernames or emails.
+     *
+     * @param array $fields
+     * @param mixed $existingUsers
+     * @return array
+     */
+    private function addUniqueUserValidation($fields, $existingUsers)
+    {
+        $existingUsers->transform(function ($user) {
+            return $user->toArray();
+        });
+
+        if (isset($fields['username']) && ! $existingUsers->isEmpty()) {
+            $rules = array_get($fields, 'username.validate');
+            $rules = ltrim($rules . '|not_in:' . $existingUsers->pluck('username')->implode(','), '|');
+            array_set($fields, 'username.validate', $rules);
         }
 
-        array_set($fields, 'username.validate', $rules);
+        if (isset($fields['email']) && ! $existingUsers->isEmpty()) {
+            $rules = array_get($fields, 'email.validate');
+            $rules = ltrim($rules . '|not_in:' . $existingUsers->pluck('email')->implode(','), '|');
+            array_set($fields, 'email.validate', $rules);
+        }
 
         return $fields;
     }

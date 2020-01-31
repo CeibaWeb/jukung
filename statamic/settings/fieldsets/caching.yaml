@@ -21,7 +21,7 @@ fields:
     show_when:
       static_caching_enabled: true
   static_caching_file_path:
-     type: text
+    type: text
     show_when:
       static_caching_enabled: true
   static_caching_ignore_query_strings:

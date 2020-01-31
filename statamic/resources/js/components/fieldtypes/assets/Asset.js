@@ -1,3 +1,5 @@
+import Luminous from 'luminous-lightbox';
+
 export default {
 
     components: {

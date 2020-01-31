@@ -43,7 +43,7 @@
                           </g>
                         </svg>
                     </a>
-                    <a @click.prevent="close" {{ translate('cp.close') }}>
+                    <a @click.prevent="close" title="{{ translate('cp.close') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19">
                           <g fill="none" fill-rule="evenodd" stroke="#676767" stroke-width="2" transform="translate(1 1.545)">
                             <path d="M16 0L.160533333 15.8389333M16 15.8389333L.160533333 0"/>
@@ -117,10 +117,11 @@
                         </div>
 
                         <publish-fields
-                            :uuid="asset.id"
-                            :field-data="fields"
-                            :fieldset-name="asset.fieldset"
-                            :focus="true">
+                            :fields="publishFields"
+                            :data.sync="fields"
+                            :errors="errors"
+                            :autofocus="true"
+                            :regular-title-field="true">
                         </publish-fields>
                     </div>
 
@@ -179,13 +180,15 @@
 
 
 <script>
+import Fieldset from '../../publish/Fieldset';
+
 export default {
 
     components: {
         FocalPointEditor: require('./FocalPointEditor.vue'),
         Renamer: require('./Renamer.vue'),
         Mover: require('../Mover.vue'),
-        PublishFields: require('../../publish/fields'),
+        PublishFields: require('../../publish/Fields.vue'),
     },
 
 
@@ -207,6 +210,7 @@ export default {
             saving: false,
             asset: null,
             fields: null,
+            publishFields: null,
             showFocalPointEditor: false,
             showRenamer: false,
             showMover: false,
@@ -264,6 +268,24 @@ export default {
             this.$http.get(url).success((response) => {
                 this.asset = response.asset;
                 this.fields = response.fields;
+                this.getFieldset();
+            });
+        },
+
+        /**
+         * Load the fieldset
+         */
+        getFieldset() {
+            const url = cp_url(`fieldsets-json/${this.asset.fieldset}`);
+
+            this.$http.get(url).success((response) => {
+                // Flatten fields from all sections into one array.
+                const fieldset = new Fieldset(response);
+                this.publishFields = _.chain(fieldset.sections)
+                    .map(section => section.fields)
+                    .flatten(true)
+                    .value();
+
                 this.loading = false;
             });
         },

@@ -111,15 +111,15 @@ abstract class Content extends Data implements ContentContract
      */
     public function supplement()
     {
-        $this->supplements['id']        = $this->id();
-        $this->supplements['slug']      = $this->slug();
-        $this->supplements['url']       = $this->url();
-        $this->supplements['uri']       = $this->uri();
-        $this->supplements['url_path']  = $this->uri(); // deprecated
-        $this->supplements['permalink'] = $this->absoluteUrl();
-        $this->supplements['edit_url']  = $this->editUrl();
-        $this->supplements['published'] = $this->published();
-        $this->supplements['order']     = $this->order();
+        $this->setSupplement('id', $this->id());
+        $this->setSupplement('slug', $this->slug());
+        $this->setSupplement('url', $this->url());
+        $this->setSupplement('uri', $this->uri());
+        $this->setSupplement('url_path', $this->uri()); // deprecated
+        $this->setSupplement('permalink', $this->absoluteUrl());
+        $this->setSupplement('edit_url', $this->editUrl());
+        $this->setSupplement('published', $this->published());
+        $this->setSupplement('order', $this->order());
 
         if ($this->supplement_taxonomies) {
             $this->addTaxonomySupplements();
@@ -205,6 +205,14 @@ abstract class Content extends Data implements ContentContract
 
         $original = $this->original;
 
+        // Setup event for whoever wants to intercept or change the content being saved.
+        $responses = event('content.saving', [$this, $original]);
+
+        // If any listener responses return null, the content shouldn't be saved.
+        if (in_array(null, $responses, true)) {
+            return $this;
+        }
+
         // Write files to disk. One for each locale stored in this data.
         $this->writeFiles();
 
@@ -215,7 +223,7 @@ abstract class Content extends Data implements ContentContract
         // Now that the item is saved, we can consider it the original state again.
         $this->syncOriginal();
 
-        // Whoever wants to know about it can do so now.
+        // Setup event for whoever wants to know about the saved content.
         event('content.saved', [$this, $original]);
 
         return $this;

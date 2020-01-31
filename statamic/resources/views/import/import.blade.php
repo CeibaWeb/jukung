@@ -9,7 +9,7 @@
     <importer inline-template>
 
         <template v-if="!importing && !imported">
-            <div class="flexy mb-24">
+            <div class="flexy mb-3">
                 <h1>{{ t('import_summary') }}</h1>
             </div>
             <div class="card">

@@ -42,6 +42,12 @@ class Fieldtype implements FieldtypeInterface
     public $is_config = false;
 
     /**
+     * Fieldtype categories
+     * @var array
+     */
+    public $category = ['text'];
+
+    /**
      * Create a new fieldtype instance
      */
     public function __construct()
@@ -53,6 +59,8 @@ class Fieldtype implements FieldtypeInterface
     public function setFieldConfig($config)
     {
         $this->field_config = $config;
+
+        return $this;
     }
 
     /**
@@ -115,6 +123,11 @@ class Fieldtype implements FieldtypeInterface
     public function isPrimaryFieldtype()
     {
         return $this->getAddonClassName() === $this->getClassNameWithoutSuffix();
+    }
+
+    public function getIcon()
+    {
+        return $this->isFirstParty() ? $this->getHandle() : 'generic';
     }
 
     /**

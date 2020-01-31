@@ -12,6 +12,7 @@ use Statamic\API\Pattern;
 use Statamic\API\Taxonomy;
 use Statamic\CP\FieldtypeFactory;
 use Illuminate\Support\Collection;
+use Statamic\CP\Fieldset as FieldsetObject;
 
 class FieldsetController extends CpController
 {
@@ -29,28 +30,6 @@ class FieldsetController extends CpController
         return view('fieldsets.index', $data);
     }
 
-    public function get()
-    {
-        $fieldsets = collect(Fieldset::all())->sortBy(function ($fieldset) {
-            return $fieldset->title();
-        })->map(function ($fieldset) {
-            // If we've decided to omit hidden fieldsets, and this one should be
-            // hidden, we'll just move right along.
-            if (bool($this->request->query('hidden', true)) === false && $fieldset->hidden()) {
-                return null;
-            }
-
-            return [
-                'title'    => $fieldset->title(),
-                'id'       => $fieldset->name(), // vue uses this as an id
-                'uuid'     => $fieldset->name(), // keeping this here temporarily, just in case.
-                'edit_url' => $fieldset->editUrl()
-            ];
-        })->filter()->values()->all();
-
-        return ['columns' => ['title'], 'items' => $fieldsets];
-    }
-
     /**
      * @param string $name
      * @return \Illuminate\View\View
@@ -59,7 +38,7 @@ class FieldsetController extends CpController
     {
         $fieldset = Fieldset::get($name);
 
-        $title = 'Editing ' . $name . '.yaml';
+        $title = t('editing') . ' ' . $name . '.yaml';
 
         return view('fieldsets.edit', compact('title', 'fieldset'));
     }
@@ -81,178 +60,6 @@ class FieldsetController extends CpController
         return ['success' => true];
     }
 
-    public function getFieldset($fieldset)
-    {
-        $fieldset = $this->getInitialFieldset($fieldset);
-
-        $fieldset->locale($this->request->input('locale', default_locale()));
-
-        try {
-            $array = $fieldset->toArray(bool($this->request->input('partials', true)));
-        } catch (\Exception $e) {
-            return response(['success' => false, 'message' => $e->getMessage()], 500);
-        }
-
-        if ($fieldset->name() === 'user') {
-            // If logging in using emails, make sure there is no username field.
-            if (Config::get('users.login_type') === 'email') {
-                $array['fields'] = collect($array['fields'])->reject(function ($field) {
-                    return $field['name'] === 'username';
-                })->values()->all();
-            }
-        }
-
-        // Default types of fieldsets should have their taxonomies formatted ready for the fields builder
-        if ($fieldset->type() === 'default' && $this->request->editing) {
-            $array['taxonomies'] = $this->formatTaxonomiesForEditing(
-                array_get($array, 'taxonomies')
-            );
-        }
-
-        if ($this->request->editing) {
-            $array['fields'] = collect($array['fields'])->map(function ($field) {
-                return $this->addConditions($field);
-            });
-        }
-
-        return $array;
-    }
-
-    private function addConditions($field)
-    {
-        if (!isset($field['show_when']) && !isset($field['hide_when'])) {
-            return $field;
-        }
-
-        $type = isset($field['show_when']) ? 'show' : 'hide';
-        $conditions = $type === 'show' ? $field['show_when'] : $field['hide_when'];
-        $style = is_string($conditions) ? 'custom' : 'standard';
-
-        $field['conditions'] = [
-            'type' => $type,
-            'style' => $style,
-            'custom' => $style === 'custom' ? $conditions : null,
-            'conditions' => [],
-        ];
-
-        if (is_array($conditions)) {
-            $field['conditions']['conditions'] = collect($conditions)->map(function ($values, $handle) {
-                if (Str::startsWith($handle, 'or_')) {
-                    $operator = 'or';
-                    $handle = Str::removeLeft($handle, 'or_');
-                }
-
-                return [
-                    'handle' => $handle,
-                    'operator' => isset($operator) ? $operator : 'and',
-                    'values' => Helper::ensureArray($values)
-                ];
-            })->values()->all();
-        }
-
-        return $field;
-    }
-
-    /**
-     * @param string $fieldset  Name of the fieldset, as specified in the URL.
-     * @return \Statamic\Contracts\CP\Fieldset
-     */
-    private function getInitialFieldset($fieldset)
-    {
-        // When using the builder to create a new fieldset, we need an object to work
-        // with, but obviously one doesn't exist. So, we'll just use a temporary one.
-        if ($fieldset === 'create' || $this->request->creating === 'true') {
-            return Fieldset::create('temporary');
-        }
-
-        // Addon fieldsets will be specified using "addon.addonname.fieldsetname"
-        if (substr_count($fieldset, '.') === 2) {
-            return $this->getAddonFieldset($fieldset);
-        }
-
-        // Settings fieldsets will be specified using "settings.area"
-        if (substr_count($fieldset, '.') === 1) {
-            return $this->getSettingsFieldset($fieldset);
-        }
-
-        // Otherwise, just get a regular fieldset.
-        return Fieldset::get($fieldset);
-    }
-
-    private function getAddonFieldset($fieldset)
-    {
-        list(, $addonName, $fieldsetName) = explode('.', $fieldset);
-
-        if ($fieldsetName !== 'settings') {
-            throw new \Exception('Cannot get non-settings fieldset.');
-        }
-
-        return Addon::create($addonName)->settingsFieldset();
-    }
-
-    private function getSettingsFieldset($fieldset)
-    {
-        list(, $fieldset) = explode('.', $fieldset);
-
-        return Fieldset::get($fieldset, 'settings');
-    }
-
-    /**
-     * Format taxonomies for editing
-     *
-     * Taxonomies exist in the fieldset file in one format, but the Vue component used
-     * for editing them requires them in another format.
-     *
-     * @param array $array
-     * @return array
-     */
-    private function formatTaxonomiesForEditing($array)
-    {
-        $taxonomies = collect();
-
-        foreach (Taxonomy::all() as $handle => $taxonomy) {
-            // Since we're adding all the taxonomies to the response, we'll
-            // need another way to know which should and shouldn't be there.
-            $hidden = false;
-
-            // If *any* taxonomies have been defined, *and* the currently iterated taxonomy is not found,
-            // we want to mark it as hidden. We check for *any* taxonomies being defined because if it's
-            // completely empty, then *all* taxonomies should be shown.
-            if (! is_null($array) && ! isset($array[$handle])) {
-                $hidden = true;
-            }
-
-            $config = array_get($array, $handle, []);
-
-            // Taxonomies can be defined by simply adding "true".
-            $config = ($config === true) ? [] : $config;
-
-            $defaults = [
-                'taxonomy' => $handle,
-                'display' => $taxonomy->title(),
-                'hidden' => $hidden
-            ];
-
-            $taxonomies[$handle] = array_merge($defaults, $config);
-        }
-
-        // Sort the fields by the order in which they were provided.
-        if (! empty($array)) {
-            $taxonomies = $taxonomies->sortBy(function ($arr) use ($array, $taxonomies) {
-                $handle = $arr['taxonomy'];
-
-                // If the taxonomy was not provided, put it at the end.
-                if (! isset($array[$handle])) {
-                    return count($taxonomies);
-                }
-
-                return array_search($handle, array_keys($array));
-            });
-        }
-
-        return $taxonomies->values()->all();
-    }
-
     public function update($name)
     {
         $contents = $this->request->input('fieldset');
@@ -261,10 +68,9 @@ class FieldsetController extends CpController
 
         $fieldset->save();
 
-        $this->success(translate('cp.fieldset_updated'));
-
         return [
             'success' => true,
+            'message' => translate('cp.fieldset_updated'),
             'redirect' => route('fieldset.edit', $fieldset->name())
         ];
     }
@@ -272,7 +78,7 @@ class FieldsetController extends CpController
     private function process($fields, $fallback_type = 'text')
     {
         // Go through each field in the fieldset
-        foreach ($fields as $field_name => $field_config) {
+        return collect($fields)->map(function ($field_config, $field_name) use ($fallback_type, $fields) {
             // Get the config fieldset for that field's fieldtype. Still with me?
             $type = array_get($field_config, 'type', $fallback_type);
             $fieldtype = FieldtypeFactory::create($type);
@@ -289,11 +95,11 @@ class FieldsetController extends CpController
                     continue;
                 }
 
-                $fields[$field_name][$field->getName()] = $field->process($fields[$field_name][$field->getName()]);
+                $field_config[$field->getName()] = $field->process($field_config[$field->getName()]);
             }
-        }
 
-        return $fields;
+            return FieldsetObject::cleanFieldForSaving($field_config);
+        })->all();
     }
 
     /**
@@ -368,42 +174,6 @@ class FieldsetController extends CpController
         })->all();
     }
 
-    public function updateLayout($fieldset)
-    {
-        $layout = collect($this->request->input('fields'))->keyBy('name')->toArray();
-
-        $fieldset = Fieldset::get($fieldset);
-
-        $contents = $fieldset->contents();
-
-        $fields = array_get($contents, 'fields', []);
-
-        $title_field = array_get($fields, 'title');
-
-        $updated_fields = [];
-
-        foreach ($layout as $name => $item) {
-            $field = $fields[$name];
-
-            if (isset($item['width'])) {
-                $field['width'] = $item['width'];
-            }
-
-            $updated_fields[$name] = $field;
-        }
-
-        // Put back the title field at the front.
-        if ($title_field) {
-            $updated_fields = array_merge(['title' => $title_field], $updated_fields);
-        }
-
-        $contents['fields'] = $updated_fields;
-
-        $fieldset->contents($contents);
-
-        $fieldset->save();
-    }
-
     public function create()
     {
         return view('fieldsets.create', [
@@ -423,10 +193,9 @@ class FieldsetController extends CpController
 
         $fieldset->save();
 
-        $this->success(translate('cp.fieldset_created'));
-
         return [
             'success' => true,
+            'message' => translate('cp.fieldset_created'),
             'redirect' => route('fieldset.edit', $fieldset->name())
         ];
     }
@@ -454,60 +223,27 @@ class FieldsetController extends CpController
 
     private function prepareFieldset($slug, $contents)
     {
-        $contents = $this->processConditions($contents);
-
-        // We need to key the array by name
-        $fields = [];
-        foreach ($contents['fields'] as $field) {
-            $field_name = $field['name'];
-            unset($field['name']);
-            $fields[$field_name] = $field;
-        }
-
-        $contents['fields'] = $this->process($fields);
-
-        $contents['taxonomies'] = $this->processTaxonomies($contents['taxonomies']);
+        $contents['sections'] = collect($contents['sections'])
+            ->keyBy('handle')
+            ->map(function ($section) {
+                return $this->processSection($section);
+            })->all();
 
         $fieldset = Fieldset::create($slug, $contents);
 
         return $fieldset;
     }
 
-    /**
-     * Process taxonomies
-     *
-     * The "taxonomies" key of the fieldset will be submitted differently than
-     * should be saved. It also needs to be ran through the fieldtype processor.
-     *
-     * @param array $taxonomies
-     * @return array
-     */
-    private function processTaxonomies($taxonomies)
+    private function processSection($section)
     {
-        $taxonomies = collect($taxonomies)->reject(function ($item) {
-            return $item['hidden'] === true;
-        })->keyBy('taxonomy')->map(function ($item, $handle) {
-            unset($item['hidden'], $item['taxonomy']);
+        $section = array_except($section, ['id', 'handle']);
 
-            if ($item['display'] === Taxonomy::whereHandle($handle)->title()) {
-                unset($item['display']);
-            }
+        $section = $this->processConditions($section);
 
-            $item = array_filter($item);
+        $section['fields'] = $this->process(
+            collect($section['fields'])->keyBy('name')->all()
+        );
 
-            // Visible taxonomy fields with no configuration are specified by "true"
-            if (empty($item)) {
-                return true;
-            }
-
-            return $item;
-        });
-
-        // If everything should be hidden, we specify that with "false"
-        if ($taxonomies->isEmpty()) {
-            return false;
-        }
-
-        return $this->process($taxonomies->all(), 'taxonomy');
+        return $section;
     }
 }

@@ -15,7 +15,7 @@
 <script>
 import InsertsAssets from '../InsertsAssets';
 
-module.exports = {
+export default {
 
     components: {
         selector: require('../../assets/Selector.vue')

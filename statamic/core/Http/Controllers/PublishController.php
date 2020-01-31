@@ -18,7 +18,6 @@ use Statamic\Exceptions\PublishException;
 abstract class PublishController extends CpController
 {
     use ProcessesFields;
-    use GetsTaxonomiesFromFieldsets;
 
     /**
      * Abstract publisher.

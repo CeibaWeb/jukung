@@ -7,6 +7,8 @@ use Statamic\Extend\Fieldtype;
 
 class YamlFieldtype extends Fieldtype
 {
+    public $category = ['structured', 'special'];
+
     /**
      * @var string
      */

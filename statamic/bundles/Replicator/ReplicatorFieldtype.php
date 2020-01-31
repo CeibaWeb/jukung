@@ -9,6 +9,8 @@ class ReplicatorFieldtype extends Fieldtype
 {
     private $process;
 
+    public $category = ['structured'];
+
     public function preProcess($data)
     {
         if (! $data) {

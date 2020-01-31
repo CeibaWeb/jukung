@@ -5,7 +5,7 @@ namespace Statamic\API;
 use Statamic\Filesystem\FileAccessor;
 
 /**
- * Manipulating files on the local filesystem
+ * Filesystem helpers
  *
  * @method static \Illuminate\Contracts\Filesystem\Filesystem filesystem()
  * @method static string get(string $file, string $fallback = null)

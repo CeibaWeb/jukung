@@ -227,6 +227,8 @@ export default {
             });
 
             draggable.on('drag:move', (e) => {
+                if (!e.originalEvent) return; // Sometimes this is undefined for whatever reason.
+
                 const target = e.originalEvent.target;
 
                 if (target.classList.contains('bard-drop-area-inner') || target.classList.contains('bard-divider')) {

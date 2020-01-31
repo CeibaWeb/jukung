@@ -6,7 +6,7 @@
 
         <select v-if="!loading"
                 :name="name"
-                :placeholder="translate('please_select')"
+                :placeholder="translate('cp.please_select')"
                 :multiple="true">
         </select>
     </div>
@@ -15,7 +15,7 @@
 <script>
 import GetsSuggestKey from './GetsSuggestKey';
 
-module.exports = {
+export default {
 
     mixins: [Fieldtype, GetsSuggestKey],
 
@@ -47,7 +47,17 @@ module.exports = {
 
         populateSuggestions(suggestions) {
             this.suggestions = suggestions;
+
+            if (this.data) {
+                var formatted = [];
+                _.each(this.data, function(value, key, list) {
+                    formatted.push({'value': value, 'text': value});
+                });
+                this.suggestions = _.union(suggestions, formatted);
+            }
+
             this.loading = false;
+
             this.$nextTick(function() {
                 this.initSelectize();
             });

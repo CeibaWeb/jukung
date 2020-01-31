@@ -1,0 +1,11 @@
+{{ if feature:icon | contains:rotate }}
+<script>
+    document.querySelector('#feature-{{index}} svg').classList.add('rotate')
+</script>
+{{/if}} 
+
+{{# {{ if feature:icon | contains:lightbulb }}
+<script>
+    document.querySelector('#feature-{{index}} svg').classList.add('lightbulb')
+</script>
+{{/if}}  #}}

@@ -35,15 +35,14 @@ class CpController extends Controller
      */
     public function templates()
     {
-        $templates = [];
-
-        foreach (Folder::disk('theme')->getFilesByTypeRecursively('templates', 'html') as $path) {
-            $parts = explode('/', $path);
-            array_shift($parts);
-            $templates[] = Str::removeRight(join('/', $parts), '.html');
-        }
-
-        return $templates;
+        $regex = '/\.(html|blade\.php)$/';
+        return collect_files(Folder::disk('theme')->getFilesRecursively('templates'))
+            ->filterByRegex($regex)
+            ->map(function ($path) use ($regex) {
+                $parts = explode('/', $path);
+                array_shift($parts);
+                return preg_replace($regex, '', join('/', $parts));
+            })->values()->all();
     }
 
     public function themes()

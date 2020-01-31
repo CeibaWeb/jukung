@@ -1,4 +1,6 @@
-module.exports = {
+import tippy from 'tippy.js';
+
+export default {
 
     params: ['tipText'],
 

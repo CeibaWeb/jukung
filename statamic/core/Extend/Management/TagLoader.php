@@ -58,6 +58,9 @@ class TagLoader
             case 'foreach':
                 return 'iterate';
 
+            case 'oauth':
+                return 'OAuth';
+
             // temporary until we add aliasing for addons
             case 'var':
                 return 'Variables';

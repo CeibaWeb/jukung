@@ -1,9 +1,4 @@
 <script>
-Mousetrap = require('mousetrap');
-
-// Mousetrap Bind Global
-(function(a){var c={},d=a.prototype.stopCallback;a.prototype.stopCallback=function(e,b,a,f){return this.paused?!0:c[a]||c[f]?!1:d.call(this,e,b,a)};a.prototype.bindGlobal=function(a,b,d){this.bind(a,b,d);if(a instanceof Array)for(b=0;b<a.length;b++)c[a[b]]=!0;else c[a]=!0};a.init()})(Mousetrap);
-
 import Branch from './Branch.vue';
 import Branches from './Branches.vue';
 import CreatePage from './CreatePage.vue';
@@ -48,6 +43,10 @@ export default {
 
         hasChildren() {
             return _.some(this.pages, page => page.items.length);
+        },
+
+        isSortable() {
+            return Vue.can('pages:reorder');
         }
 
     },
@@ -81,25 +80,21 @@ export default {
         },
 
         initSortable: function() {
-            if (this.pages.length < 2 || ! Vue.can('pages:reorder')) {
+            if (! this.isSortable) {
                 return;
             }
-
-            $('.page-tree').addClass('tree-sortable');
 
             var self = this;
             var draggedIndex, draggedPage, draggedInstance;
 
             var placeholder = '' +
                     '<li class="branch branch-placeholder">' +
-                    '<div class="branch-row depth-{{ depth }}">' +
-                    '<div class="page-indent">' +
-                    '<span class="page-toggle"></span>' +
-                    '<span class="page-move drag-handle"></span>' +
-                    '<span class="indent-arrow"></span>' +
-                    '</div>' +
-                    '<div class="page-text">&nbsp;</div>' +
-                    '</div>' +
+                        '<div class="branch-row w-full flex items-center depth-{{ depth }}">' +
+                            '<div class="page-move drag-handle w-6 h-full"></div>' +
+                            '<div class="flex p-1 items-center flex-1">' +
+                                '<div class="page-text">&nbsp;</div>' +
+                            '</div>' +
+                        '</div>' +
                     '</li>';
 
             $(this.$el).find('.page-tree > ul + ul').nestedSortable({
@@ -109,6 +104,13 @@ export default {
                 placeholder: placeholder,
                 bodyClass: 'page-tree-dragging',
                 draggedClass: 'branch-dragged',
+                onMousedown: function ($item, _super, event) {
+                    // Prevent dragging a lone top level page.
+                    var branch = $item[0].__vue__;
+                    var depth = parseInt($item[0].dataset.depth);
+                    if (branch.$parent.pages.length === 1 && depth === 1) return false;
+                    return true;
+                },
                 onDragStart: function($item, container, _super, event) {
                     // Grab the original page we're dragging now so we can move it later.
                     var branch = $item[0].__vue__;
@@ -125,6 +127,7 @@ export default {
                     _super($item, container);
                 },
                 onDrop: function($item, container, _super, event) {
+                    self.$els.click.play();
                     self.changed = true;
 
                     // Remove the page from its original place
@@ -168,10 +171,12 @@ export default {
         },
 
         expandAll: function() {
+            this.$els.card_set.play();
             this.toggleAll(false);
         },
 
         collapseAll: function() {
+            this.$els.card_drop.play();
             this.toggleAll(true);
         },
 
@@ -259,8 +264,6 @@ export default {
             if (this.pages.length > 1) {
                 return;
             }
-
-            $('.page-tree').removeClass('tree-sortable');
 
             $(this.$el).find('.page-tree > ul + ul').nestedSortable('destroy');
         }

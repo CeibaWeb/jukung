@@ -1,0 +1,30 @@
+<section class="w-full flex flex-wrap -mx-2 justify-center">
+  {{ entries }}
+    <article class="flex flex-col my-12 font-sans shadow-md mx-2 w-2/5">  
+      <img class="h-thirty w-full rounded-t-sm" style="object-fit: cover; object-position: center center;" src="{{ splash_image }}" alt="">
+      <div class="w-full relative bg-white rounded-b-sm">
+        <a class="title" href="{{ url }}">
+        <div class="shadow-lg absolute pin-l pin-t -mt-8 bg-orange text-white antialiased pl-2 pr-6">
+            <p class="pt-2 pb-1 opacity-75">{{ series.0 get="title" }}</p>
+            <h3 class="pt-1 pb-2 uppercase">{{ title }}</h3>
+          </div>
+        </a>
+        <div class="article-body mt-14 pb-4 px-2 {{ if right }}text-right{{ /if }}">
+          <p>{{ description }}</p>
+          <div class="flex justify-end my-5">
+            <span>
+              {{ relate:author }}
+                <p>{{ first_name }} {{ last_name }}</p>
+              {{ /relate:author }}
+            </span>
+          </div>
+          <span class="flex flex-wrap">
+            {{ topics }}
+            <p class="bg-grey-light rounded-sm antialiased shadow px-2 py-1 {{if first}}mr-1{{else}}mx-1{{/if}}">{{ title }}</p>
+            {{ /topics }}
+          </span>
+        </div>
+      </div>
+    </article>
+  {{ /entries }}
+</section>

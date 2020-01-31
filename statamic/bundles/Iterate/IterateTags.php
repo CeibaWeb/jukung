@@ -43,7 +43,7 @@ class IterateTags extends Tags
         $keyKey = 'key';
         $valueKey = 'value';
 
-        if (count($as = $this->getList('as')) === 1) {
+        if (count($as = $this->getList('as', [])) === 1) {
             $valueKey = $as[0];
         } elseif (count($as) > 1) {
             list($keyKey, $valueKey) = $as;

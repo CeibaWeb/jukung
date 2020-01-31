@@ -21,12 +21,16 @@ class UsersDriver extends AbstractDriver
 
     public function createItem($path, $contents)
     {
+        $data = YAML::parse($contents);
+
         $user = User::create()
             ->username(pathinfo($path)['filename'])
-            ->with(YAML::parse($contents))
+            ->with($data)
             ->get();
 
-        $user->ensureSecured();
+        if ($rawPassword = array_get($data, 'password')) {
+            $user->securePassword(true, true);
+        }
 
         return $user;
     }

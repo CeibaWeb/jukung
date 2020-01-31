@@ -36,7 +36,6 @@
 
 </template>
 
-
 <style lang="scss">
     .input-with-loader {
         position: relative;
@@ -48,7 +47,6 @@
         }
     }
 </style>
-
 
 <script>
     export default {

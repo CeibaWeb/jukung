@@ -97,7 +97,7 @@ export default {
 
         getFields() {
             return JSON.parse(JSON.stringify(
-                this.$parent.$parent.$parent.$parent.fields // todo: Do this the right way.
+                this.$parent.$parent.$parent.$parent.$parent.fields // todo: Do this the right way.
             ));
         },
 

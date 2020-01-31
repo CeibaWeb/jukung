@@ -11,6 +11,8 @@ class GridFieldtype extends Fieldtype
 {
     private $process;
 
+    public $category = ['structured'];
+
     public function canHaveDefault()
     {
         return false;

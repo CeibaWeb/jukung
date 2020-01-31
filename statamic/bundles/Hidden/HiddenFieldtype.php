@@ -6,4 +6,5 @@ use Statamic\Extend\Fieldtype;
 
 class HiddenFieldtype extends Fieldtype
 {
+    public $category = ['special', 'text'];
 }
